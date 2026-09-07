@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const VERSION='1.4.0';
+  const VERSION='2.0.0';
   const SEOUL_TZ='Asia/Seoul';
   const meetingDate=new Date('2026-09-04T00:00:00+09:00');
 
@@ -47,9 +47,11 @@
     const seoulToday=new Date(getSeoulYmd(now)+'T00:00:00+09:00');
     const days=Math.ceil((meetingDate-seoulToday)/86400000);
     const dText=days>0?'D-'+days:days===0?'D-DAY':'D+'+Math.abs(days);
-    document.getElementById('dday').textContent=dText;
-    const dl=document.getElementById('ddayLarge'); if(dl) dl.textContent=dText;
-    const ds=document.getElementById('ddayState'); if(ds) ds.textContent=days>0?`${days}일 남음 · Asia/Seoul`:days===0?'오늘 · Asia/Seoul':`${Math.abs(days)}일 지남 · Asia/Seoul`;
+    if(!window.ARIA_MEMORY_ACTIVE){
+      document.getElementById('dday').textContent=dText;
+      const dl=document.getElementById('ddayLarge'); if(dl) dl.textContent=dText;
+      const ds=document.getElementById('ddayState'); if(ds) ds.textContent=days>0?`${days}일 남음 · Asia/Seoul`:days===0?'오늘 · Asia/Seoul':`${Math.abs(days)}일 지남 · Asia/Seoul`;
+    }
     document.getElementById('todayCardTitle').textContent=`${sp.month} ${sp.day}`;
     document.getElementById('weekCardTitle').textContent=getWeekRangeLabel(now);
     document.getElementById('monthCardTitle').textContent=`${sp.year} ${sp.month}`;
@@ -850,7 +852,7 @@ function renderWorkflow(title,kicker,rows,footer=""){
   el.innerHTML=`
     <div class="section-head">
       <div><span class="eyebrow">${kicker}</span><h2>${title}</h2></div>
-      <span class="version-chip">v1.4.0</span>
+      <span class="version-chip">ARIA MEMORY v2.0.0</span>
     </div>
     <div class="workflow-grid">
       ${safeRows.map(([a,b,c])=>`<article class="workflow-row"><strong>${escapeHtml(String(a??""))}</strong><span>${escapeHtml(String(b??""))}</span>${c?`<small>${escapeHtml(String(c))}</small>`:""}</article>`).join("")}
@@ -928,4 +930,3 @@ function mediaWorkflow(){
   const rows=items.slice(0,8).map(x=>[x.title||x.name||"미디어",x.type||"MEDIA",x.url||x.path||""]);
   renderWorkflow("미디어 호출","GEN · MEDIA",rows,"자동재생하지 않습니다. 사용자가 선택한 항목만 실행합니다.");
 }
-
