@@ -23,7 +23,7 @@ async function showOffice2Action(p){
     theme("DARK_GOLD");
     const verify=$("actionReceiveVerify");
     if(verify){verify.textContent=`DISPLAY v1.10.0 · 수신 ACTION · ${actionId}`;document.body.appendChild(verify)}
-    const url=new URL("https://ipma.kr/ai-office/");
+    const url=new URL("https://ipma1822-png.github.io/ai-office/");
     url.searchParams.set("displayAction",actionId);
     url.searchParams.set("display","1");
     url.searchParams.set("source",clean(p?.source||"mobile-control"));
