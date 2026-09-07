@@ -6,7 +6,7 @@ export const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
 });
 export const $ = id => document.getElementById(id);
 export const clean = value => value == null ? "" : String(value).trim();
-export const escapeHtml = value => clean(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+export const escapeHtml = value => clean(value).replace(/[&<>'\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"}[c]));
 export const normalizeSpeech = value => clean(value).toLowerCase().replace(/(보여\s*줘|열어\s*줘|재생해\s*줘|해\s*줘)/g, "").replace(/[\s.,!?~]/g, "");
 export const sessionCode = () => String(Math.floor(100000 + Math.random() * 900000));
 export const sessionKey = code => `${cfg.channelPrefix}:${clean(code)}`;
@@ -19,12 +19,22 @@ export const youtubeId = value => {
   } catch {}
   return "";
 };
-export async function requireSession(redirect = "../") {
+export async function requireSession(redirect = "../", allowPublic = false) {
   const { data: { session } } = await db.auth.getSession();
+  if (!session && allowPublic) return { publicViewer: true };
   if (!session) { location.replace(redirect); return null; }
   return session;
 }
 export async function loadCatalog() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) {
+    const endpoint = `${cfg.supabaseUrl}/functions/v1/ai-office-public-catalog`;
+    const response = await fetch(endpoint, { headers: { apikey: cfg.supabasePublishableKey } });
+    if (!response.ok) throw new Error(`공개 카탈로그 오류 ${response.status}`);
+    const payload = await response.json();
+    if (payload?.error) throw new Error(payload.error);
+    return { menus: payload?.menus || [], contents: payload?.contents || [] };
+  }
   const [{ data: menus, error: menuError }, { data: contents, error: contentError }] = await Promise.all([
     db.from("ai_office_menus").select("*").eq("is_visible", true).order("sort_order").order("title"),
     db.from("ai_office_contents").select("*").eq("is_visible", true).order("sort_order").order("title")
