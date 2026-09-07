@@ -14,9 +14,21 @@ async function show(item,commandId){if(!item){ack(commandId,false,"자료를 찾
  }catch(e){$("loading").hidden=true;await ack(commandId,false,e.message||"표시 실패")}}
 function playSound(kind){if(!["SOFT","IMPACT"].includes(kind))return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=kind==="IMPACT"?180:520;gain.gain.setValueAtTime(.045,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);osc.start();osc.stop(ctx.currentTime+.18)}catch{}}
 
+const homeActionMap=Object.freeze({
+  "aria:meeting-agenda":"aria:meeting",
+  "aria:meeting-check":"aria:meeting",
+  "aria:meeting-brief":"aria:meeting",
+  "aria:meeting-result":"aria:meeting",
+  "aria:followup":"aria:project",
+  "aria:followup-check":"aria:project",
+  "aria:task-proposal":"aria:task",
+  "aria:task-approval":"aria:task"
+});
+
 async function showOffice2Action(p){
   const actionId=clean(p?.actionId);
   if(!actionId){await ack(p?.id,false,"ACTION 정보가 없습니다.");return}
+  const routedActionId=homeActionMap[actionId]||actionId;
   try{
     $("loading").hidden=false;
     $("playerWrap").innerHTML="";
@@ -24,7 +36,8 @@ async function showOffice2Action(p){
     const verify=$("actionReceiveVerify");
     if(verify){verify.textContent=`DISPLAY v1.10.0 · 수신 ACTION · ${actionId}`;document.body.appendChild(verify)}
     const url=new URL("https://ipma1822-png.github.io/ai-office/");
-    url.searchParams.set("displayAction",actionId);
+    url.searchParams.set("displayAction",routedActionId);
+    url.searchParams.set("requestedAction",actionId);
     url.searchParams.set("display","1");
     url.searchParams.set("source",clean(p?.source||"mobile-control"));
     url.searchParams.set("commandId",clean(p?.id||""));
@@ -34,7 +47,7 @@ async function showOffice2Action(p){
     const frame=$("webFrame");
     let settled=false;
     const timer=setTimeout(async()=>{if(settled)return;settled=true;$("loading").hidden=true;await ack(p.id,false,`로딩 실패 · ${actionId}`)},10000);
-    frame.onload=async()=>{if(settled)return;settled=true;clearTimeout(timer);$("loading").hidden=true;if(verify)verify.textContent=`DISPLAY v1.10.0 · 수신 ACTION · ${actionId}`;await ack(p.id,true,`로드 ACTION · ${actionId}`)};
+    frame.onload=async()=>{if(settled)return;settled=true;clearTimeout(timer);$("loading").hidden=true;if(verify)verify.textContent=`DISPLAY v1.10.0 · 수신 ${actionId} → ${routedActionId}`;await ack(p.id,true,`로드 ACTION · ${actionId} → ${routedActionId}`)};
     frame.src=url.toString();
     active("webView");
   }catch(e){
