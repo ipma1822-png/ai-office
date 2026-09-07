@@ -10,12 +10,24 @@ function menuHasContent(id,seen=new Set()){if(seen.has(id))return false;seen.add
 function menuTrailText(menuId){const names=[];const seen=new Set();let current=state.menus.find(menu=>menu.id===menuId);while(current&&!seen.has(current.id)){seen.add(current.id);names.push(current.title);current=state.menus.find(menu=>menu.id===current.parent_id)}return names.join(" ")}
 function bindContentButtons(scope=document){scope.querySelectorAll("[data-content]").forEach(button=>button.onclick=()=>showContent(button.dataset.content,"touch"))}
 
+const office2Actions=[["aria:today","오늘 업무"],["aria:week","이번 주"],["aria:month","이번 달"],["aria:schedule","일정·D-DAY"],["aria:task","업무"],["aria:project","PROJECT"],["aria:meeting","회의 준비"],["aria:meeting-agenda","회의 안건"],["aria:meeting-check","준비 체크"],["aria:meeting-brief","회의 브리핑"],["aria:meeting-result","회의 결과"],["aria:followup","후속 업무"],["aria:followup-check","후속 점검"],["aria:task-proposal","업무 제안"],["aria:task-approval","업무 승인"],["gen:news","뉴스 브리핑"],["gen:article","기사 준비"],["gen:library","자료 보기"],["gen:media","미디어"]];
+const quickActionIds=["aria:today","aria:task","aria:project","aria:meeting","gen:news","gen:article","gen:library","gen:media"];
+function officeActionLabel(id){return office2Actions.find(([actionId])=>actionId===id)?.[1]||id}
+function officeActionButton(id,label=officeActionLabel(id)){return `<button class="command-button" data-office2-action="${id}"><b>★ ${escapeHtml(label)}</b><small>AI OFFICE 바로 실행</small></button>`}
+function bindOfficeActionButtons(scope=document){scope.querySelectorAll("[data-office2-action]").forEach(button=>button.onclick=()=>showOffice2Action(button.dataset.office2Action,"touch"))}
+
 function renderHome(){
-  $("favorites").innerHTML=state.contents.filter(content=>content.is_favorite).slice(0,8).map(makeButton).join("")||'<div class="empty">즐겨찾기가 없습니다.</div>';
-  const roots=menuChildren(null).filter(menu=>menuHasContent(menu.id));
-  $("megaRoots").innerHTML=roots.map(menu=>`<button class="mega-root-button" data-menu="${menu.id}">${escapeHtml(menu.title)}</button>`).join("")||'<div class="empty">등록된 메뉴가 없습니다.</div>';
-  $("megaRoots").querySelectorAll("[data-menu]").forEach(button=>button.onclick=()=>openMega(button.dataset.menu));
+  const favorites=state.contents.filter(content=>content.is_favorite).slice(0,8);
+  $("favorites").innerHTML=favorites.length?favorites.map(makeButton).join(""):quickActionIds.map(id=>officeActionButton(id)).join("");
   bindContentButtons($("favorites"));
+  bindOfficeActionButtons($("favorites"));
+
+  const roots=menuChildren(null).filter(menu=>menuHasContent(menu.id));
+  $("megaRoots").innerHTML=roots.length
+    ? roots.map(menu=>`<button class="mega-root-button" data-menu="${menu.id}">${escapeHtml(menu.title)}</button>`).join("")
+    : '<button class="mega-root-button" data-static-mega="aria">ARIA · 아리아</button><button class="mega-root-button" data-static-mega="gen">GEN · 젠</button>';
+  $("megaRoots").querySelectorAll("[data-menu]").forEach(button=>button.onclick=()=>openMega(button.dataset.menu));
+  $("megaRoots").querySelectorAll("[data-static-mega]").forEach(button=>button.onclick=()=>openStaticMega(button.dataset.staticMega));
   renderSearch($("searchInput").value);
 }
 
@@ -24,16 +36,29 @@ function renderSearch(value){
   $("searchSection").hidden=!q;
   if(!q){$("searchResults").innerHTML="";return}
   const matches=state.contents.filter(content=>[content.title,content.button_label,content.voice_command,...(content.voice_aliases||[]),...(content.keywords||[]),menuTrailText(content.menu_id)].join(" ").toLowerCase().includes(q));
-  $("searchResults").innerHTML=matches.map(makeButton).join("")||'<div class="empty">검색 결과가 없습니다.</div>';
+  const staticMatches=office2Actions.filter(([id,label])=>`${id} ${label}`.toLowerCase().includes(q));
+  $("searchResults").innerHTML=[...matches.map(makeButton),...staticMatches.map(([id,label])=>officeActionButton(id,label))].join("")||'<div class="empty">검색 결과가 없습니다.</div>';
   bindContentButtons($("searchResults"));
+  bindOfficeActionButtons($("searchResults"));
 }
 
 function openMega(menuId){state.megaStack=[menuId];$("megaOverlay").classList.add("open");$("megaOverlay").setAttribute("aria-hidden","false");document.body.classList.add("mega-open");renderMega()}
+function openStaticMega(agent){state.megaStack=[`static:${agent}`];$("megaOverlay").classList.add("open");$("megaOverlay").setAttribute("aria-hidden","false");document.body.classList.add("mega-open");renderMega()}
 function closeMega(){$("megaOverlay").classList.remove("open","backing");$("megaOverlay").setAttribute("aria-hidden","true");document.body.classList.remove("mega-open");state.megaStack=[]}
 function enterMega(menuId){state.megaStack.push(menuId);renderMega()}
 function backMega(){if(state.megaStack.length<=1){closeMega();return}state.megaStack.pop();$("megaOverlay").classList.remove("backing");void $("megaOverlay").offsetWidth;$("megaOverlay").classList.add("backing");renderMega()}
 function renderMega(){
-  const currentId=state.megaStack.at(-1);const menu=state.menus.find(item=>item.id===currentId);
+  const currentId=state.megaStack.at(-1);
+  if(String(currentId).startsWith("static:")){
+    const agent=String(currentId).split(":")[1];
+    const rows=office2Actions.filter(([id])=>id.startsWith(`${agent}:`));
+    $("megaTitle").textContent=agent==="aria"?"ARIA · 아리아":"GEN · 젠";
+    $("megaBack").hidden=false;$("megaBack").textContent="← 홈";
+    $("megaBody").innerHTML=rows.map(([id,label])=>`<button class="mega-item content-item" data-office2-action="${id}">${escapeHtml(label)}</button>`).join("");
+    bindOfficeActionButtons($("megaBody"));
+    return;
+  }
+  const menu=state.menus.find(item=>item.id===currentId);
   if(!menu){closeMega();return}
   $("megaTitle").textContent=menu.title;$("megaBack").hidden=false;$("megaBack").textContent=state.megaStack.length<=1?"← 홈":"← 뒤로";
   const childMenus=menuChildren(menu.id).filter(child=>menuHasContent(child.id));
@@ -45,9 +70,8 @@ function renderMega(){
 
 async function showContent(id,source){const item=state.contents.find(c=>c.id===id);if(!item)return;if(!state.display){toast("⚠ DISPLAY 연결을 확인하세요");return}const payload=commandPayload(item,source);state.pending.set(payload.id,setTimeout(()=>{state.pending.delete(payload.id);toast("⚠ 화면 연결을 확인하세요")},AI_OFFICE_CONFIG.commandTimeoutMs));toast("전송 중…");await sendBroadcast(state.channel,"command",payload);state.recent=[id,...state.recent.filter(x=>x!==id)].slice(0,8);localStorage.setItem("aiOfficeRecent",JSON.stringify(state.recent))}
 function connect(code){if(state.channel)db.removeChannel(state.channel);state.code=code;localStorage.setItem("aiOfficeSessionCode",code);$("codeTitle").textContent=`연결코드 · ${code}`;$("sessionText").textContent=`SESSION ${code}`;state.channel=createPresentationChannel(code,"control",{presence:p=>{state.display=presenceHasRole(p,"display");$("displayDot").classList.toggle("on",state.display);$("displayStatus").textContent=state.display?"DISPLAY 연결됨":"DISPLAY 연결 대기"},ack:p=>{const timer=state.pending.get(p.commandId);if(timer){clearTimeout(timer);state.pending.delete(p.commandId)}const verify=$("actionSendVerify");if(verify&&p.message)verify.textContent=`DISPLAY 응답 · ${p.message}`;toast(p.ok?`✓ ${p.message||"표시 완료"}`:`⚠ ${p.message||"표시 실패"}`)}})}
-const office2Actions=[["aria:today","오늘 업무"],["aria:week","이번 주"],["aria:month","이번 달"],["aria:schedule","일정·D-DAY"],["aria:task","업무"],["aria:project","PROJECT"],["aria:meeting","회의 준비"],["aria:meeting-agenda","회의 안건"],["aria:meeting-check","준비 체크"],["aria:meeting-brief","회의 브리핑"],["aria:meeting-result","회의 결과"],["aria:followup","후속 업무"],["aria:followup-check","후속 점검"],["aria:task-proposal","업무 제안"],["aria:task-approval","업무 승인"],["gen:news","뉴스 브리핑"],["gen:article","기사 준비"],["gen:library","자료 보기"],["gen:media","미디어"]];
 async function showOffice2Action(actionId,source="touch"){if(!state.display){toast("⚠ DISPLAY 연결을 확인하세요");return}const payload={id:crypto.randomUUID(),type:"AI_OFFICE_ACTION",actionId,source,payload:{agent:actionId.split(":")[0],action:actionId.slice(actionId.indexOf(":")+1)},sentAt:new Date().toISOString(),version:"1.10.0"};const verify=$("actionSendVerify");if(verify)verify.textContent=`송신 ACTION · ${actionId}`;state.pending.set(payload.id,setTimeout(()=>{state.pending.delete(payload.id);toast("⚠ 화면 연결을 확인하세요")},AI_OFFICE_CONFIG.commandTimeoutMs));toast(`${actionId} 전송 중…`);await sendBroadcast(state.channel,"command",payload)}
-function renderOffice2Actions(){const box=$("office2Actions");if(!box)return;box.innerHTML=office2Actions.map(([id,label])=>`<button class="office2-action" data-office2-action="${id}">${label}</button>`).join("");box.onclick=e=>{const btn=e.target.closest("[data-office2-action]");if(btn)showOffice2Action(btn.dataset.office2Action,"touch")}}
-function startVoice(){const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SpeechRecognition){toast("이 브라우저는 음성인식을 지원하지 않습니다.");return}const r=new SpeechRecognition();r.lang="ko-KR";r.interimResults=false;r.maxAlternatives=3;$("ptt").classList.add("listening");$("ptt").querySelector("span").textContent="듣고 있습니다";r.onresult=e=>{const phrases=Array.from(e.results[0]).map(x=>x.transcript);const normalized=phrases.map(normalizeSpeech);const match=state.contents.find(c=>[c.voice_command,...(c.voice_aliases||[]),c.title,c.button_label].filter(Boolean).some(a=>normalized.some(p=>p.includes(normalizeSpeech(a))||normalizeSpeech(a).includes(p))));if(match){toast(`“${phrases[0]}” → ${match.title}`);showContent(match.id,"voice")}else toast(`명령을 찾지 못했습니다: ${phrases[0]}`)};r.onerror=()=>toast("음성을 인식하지 못했습니다.");r.onend=()=>{$("ptt").classList.remove("listening");$("ptt").querySelector("span").textContent="눌러서 말하기"};r.start()}
+function renderOffice2Actions(){const box=$("office2Actions");if(!box)return;box.innerHTML=office2Actions.map(([id,label])=>`<button class="office2-action" data-office2-action="${id}">${label}</button>`).join("");bindOfficeActionButtons(box)}
+function startVoice(){const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SpeechRecognition){toast("이 브라우저는 음성인식을 지원하지 않습니다.");return}const r=new SpeechRecognition();r.lang="ko-KR";r.interimResults=false;r.maxAlternatives=3;$("ptt").classList.add("listening");$("ptt").querySelector("span").textContent="듣고 있습니다";r.onresult=e=>{const phrases=Array.from(e.results[0]).map(x=>x.transcript);const normalized=phrases.map(normalizeSpeech);const match=state.contents.find(c=>[c.voice_command,...(c.voice_aliases||[]),c.title,c.button_label].filter(Boolean).some(a=>normalized.some(p=>p.includes(normalizeSpeech(a))||normalizeSpeech(a).includes(p))));if(match){toast(`“${phrases[0]}” → ${match.title}`);showContent(match.id,"voice");return}const staticMatch=office2Actions.find(([,label])=>normalized.some(p=>p.includes(normalizeSpeech(label))||normalizeSpeech(label).includes(p)));if(staticMatch){toast(`“${phrases[0]}” → ${staticMatch[1]}`);showOffice2Action(staticMatch[0],"voice")}else toast(`명령을 찾지 못했습니다: ${phrases[0]}`)};r.onerror=()=>toast("음성을 인식하지 못했습니다.");r.onend=()=>{$("ptt").classList.remove("listening");$("ptt").querySelector("span").textContent="눌러서 말하기"};r.start()}
 async function refreshCatalog(){Object.assign(state,await loadCatalog());renderHome();if(state.megaStack.length)renderMega()}
-async function boot(){if(!await requireSession("../",true))return;renderOffice2Actions();state.recent=JSON.parse(localStorage.getItem("aiOfficeRecent")||"[]");try{await refreshCatalog()}catch(e){toast("자료를 불러오지 못했습니다. 설치 SQL을 확인하세요.")}connect(localStorage.getItem("aiOfficeSessionCode")||sessionCode());db.channel("ai-office-catalog-control").on("postgres_changes",{event:"*",schema:"public",table:"ai_office_menus"},refreshCatalog).on("postgres_changes",{event:"*",schema:"public",table:"ai_office_contents"},refreshCatalog).subscribe();$("searchInput").oninput=e=>renderSearch(e.target.value);$("clearSearch").onclick=()=>{$("searchInput").value="";renderSearch("");$("searchInput").focus()};$("newSession").onclick=()=>connect(sessionCode());$("ptt").onclick=startVoice;$("megaBack").onclick=backMega;$("megaClose").onclick=closeMega;$("megaOverlay").onclick=e=>{if(e.target===$("megaOverlay"))closeMega()};document.addEventListener("keydown",e=>{if(e.key==="Escape"&&state.megaStack.length)closeMega()})}boot();
+async function boot(){if(!await requireSession("../",true))return;renderOffice2Actions();renderHome();state.recent=JSON.parse(localStorage.getItem("aiOfficeRecent")||"[]");try{await refreshCatalog()}catch(e){console.warn("AI OFFICE catalog unavailable",e);renderHome();toast("자료목록 없이 기본 바로가기·메가메뉴로 실행합니다.")}connect(localStorage.getItem("aiOfficeSessionCode")||sessionCode());db.channel("ai-office-catalog-control").on("postgres_changes",{event:"*",schema:"public",table:"ai_office_menus"},()=>refreshCatalog().catch(()=>{})).on("postgres_changes",{event:"*",schema:"public",table:"ai_office_contents"},()=>refreshCatalog().catch(()=>{})).subscribe();$("searchInput").oninput=e=>renderSearch(e.target.value);$("clearSearch").onclick=()=>{$("searchInput").value="";renderSearch("");$("searchInput").focus()};$("newSession").onclick=()=>connect(sessionCode());$("ptt").onclick=startVoice;$("megaBack").onclick=backMega;$("megaClose").onclick=closeMega;$("megaOverlay").onclick=e=>{if(e.target===$("megaOverlay"))closeMega()};document.addEventListener("keydown",e=>{if(e.key==="Escape"&&state.megaStack.length)closeMega()})}boot();
