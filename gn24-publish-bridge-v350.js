@@ -2,7 +2,7 @@
 'use strict';
 const QUEUE_KEY='ipma_ai_office_gn24_publish_queue_v1';
 const TARGET='https://news24.ai.kr/pages/ai-office-publish/';
-const RECEIPT_MODULE='./gn24-publish-receipt-v360.js?v=3.6.4';
+const RECEIPT_MODULE='./gn24-publish-receipt-v360.js?v=3.6.5';
 const $=id=>document.getElementById(id);
 const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
 function b64url(obj){const json=JSON.stringify(obj);const bytes=new TextEncoder().encode(json);let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
