@@ -1,0 +1,45 @@
+(()=>{
+'use strict';
+const ARTICLE_KEY='ipma_ai_office_article_drafts_v1';
+const QUEUE_KEY='ipma_ai_office_gn24_publish_queue_v1';
+const $=id=>document.getElementById(id);
+const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
+const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
+const validUrl=v=>/^https?:\/\/[^\s]+$/i.test(String(v||'').trim());
+let activeId='';
+function article(id){return read(ARTICLE_KEY,[]).find(x=>x.id===id)||null}
+function syncQueue(id,url){
+ const q=read(QUEUE_KEY,[]);let changed=false;
+ q.forEach(x=>{if(x.articleId===id){x.imageUrl=url;x.imageReady=validUrl(url);x.imageUrlUpdatedAt=new Date().toISOString();changed=true}});
+ if(changed)write(QUEUE_KEY,q);
+}
+function persist(){
+ const id=$('nr350Id')?.value||'';const input=$('nr359ImageUrl');if(!id||!input)return false;
+ const url=input.value.trim();const rows=read(ARTICLE_KEY,[]),i=rows.findIndex(x=>x.id===id);if(i<0)return false;
+ rows[i]={...rows[i],imageUrl:url,imageReady:validUrl(url),imageUrlUpdatedAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+ write(ARTICLE_KEY,rows);syncQueue(id,url);renderStatus(url);return validUrl(url);
+}
+function renderStatus(url){
+ const st=$('nr359ImageStatus'),img=$('nr359ImagePreview');if(!st||!img)return;
+ if(validUrl(url)){st.textContent='대표이미지 URL 연결 완료 · 최종 발행 패키지 imageUrl 전달 준비됨';st.style.color='#baf3d0';img.src=url;img.hidden=false;}
+ else{st.textContent=url?'URL 형식을 확인해 주세요. https:// 또는 http:// 실제 이미지 주소가 필요합니다.':'대표이미지 실제 URL을 연결하면 최종 발행 패키지의 imageUrl로 전달됩니다.';st.style.color=url?'#ffd27a':'#aebed1';img.removeAttribute('src');img.hidden=true;}
+}
+function loadCurrent(){
+ const id=$('nr350Id')?.value||'';if(!id||!$('nr359ImageUrl'))return;
+ if(id===activeId)return;activeId=id;const a=article(id);const url=String(a?.imageUrl||'');$('nr359ImageUrl').value=url;renderStatus(url);
+}
+function install(){
+ const imageBrief=$('nr350Image');if(!imageBrief||$('gn24ImageUrl359'))return;
+ const anchor=$('gn24BrandLock358')||imageBrief.closest('label');if(!anchor)return;
+ const box=document.createElement('div');box.id='gn24ImageUrl359';box.style.cssText='grid-column:1/-1;padding:12px;border:1px solid rgba(85,217,139,.3);border-radius:12px;background:rgba(85,217,139,.055)';
+ box.innerHTML=`<label style="display:block;font-size:12px;color:#aebed1;font-weight:850">대표이미지 실제 URL<input id="nr359ImageUrl" type="url" inputmode="url" placeholder="https://.../article-image.jpg" style="width:100%;margin-top:6px;padding:11px;border:1px solid rgba(148,163,184,.25);border-radius:10px;background:#071525;color:#eef4ff"></label><div id="nr359ImageStatus" style="margin-top:8px;font-size:12px;color:#aebed1"></div><img id="nr359ImagePreview" hidden alt="대표이미지 미리보기" style="display:block;max-width:100%;max-height:280px;margin-top:10px;border-radius:12px;object-fit:contain;background:#020617">`;
+ anchor.insertAdjacentElement('afterend',box);
+ $('nr359ImageUrl').addEventListener('change',persist);
+ $('nr359ImageUrl').addEventListener('blur',persist);
+ $('nr350Form')?.addEventListener('submit',persist,true);
+ ['nr350Review','nr350Approval','nr350Preflight','nr350Final','nr350ConfirmFinal'].forEach(id=>$(id)?.addEventListener('click',()=>{persist();if(id==='nr350ConfirmFinal')setTimeout(()=>{const articleId=$('nr350Id')?.value||'';const a=article(articleId);if(articleId&&a)syncQueue(articleId,String(a.imageUrl||''));},150)},true));
+ loadCurrent();
+}
+function tick(){install();loadCurrent();const id=$('nr350Id')?.value||'';if(id&&$('nr359ImageUrl')){const a=article(id);if(a&&a.imageUrl!==$('nr359ImageUrl').value&&document.activeElement!==$('nr359ImageUrl')){$('nr359ImageUrl').value=a.imageUrl||'';renderStatus(a.imageUrl||'')}}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setInterval(tick,500));else setInterval(tick,500);
+})();
