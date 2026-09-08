@@ -31,6 +31,10 @@ function hideVoiceSection(){
 }
 function hideVersionNoise(){
   [...document.querySelectorAll('.version-chip,[class*="version"],[class*="build"]')].forEach(el=>{
+    if(el.id==='systemVersion365'){
+      el.style.removeProperty('display');
+      return;
+    }
     const t=norm(el.textContent);
     if(/v\d|ARIA MEMORY|PHASE/i.test(t)&&t.length<100)el.style.display='none';
   });
