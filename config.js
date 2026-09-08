@@ -21,7 +21,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     {src:'./gen-news-desk-v355.js?v=3.5.5'},
     {src:'./gen-factcheck-v357.js?v=3.5.7'},
     {src:'./gn24-brand-lock-v358.js?v=3.6.2'},
-    {id:'gn24PublishReceipt360Script',src:'./gn24-publish-receipt-v360.js?v=3.6.7'},
+    {id:'gn24PublishReceipt360Script',src:'./gn24-publish-receipt-v360.js?v=3.6.8'},
     {id:'systemVersion365Script',src:'./system-version-v365.js?v=3.6.6'},
     {src:'./gn24-publish-bridge-v350.js?v=3.6.7'}
   ];
