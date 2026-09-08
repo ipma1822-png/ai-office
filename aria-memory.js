@@ -185,7 +185,7 @@ async function logAction(item, action, sourceText = "") {
   if (error) console.warn("ARIA activity log", error);
 }
 async function commitPending() {
-  if (!state.session) return message("로그인이 필요합니다", "MEMORY에 저장하려면 먼저 로그인해 주세요.");
+  if (!state.session) return message("카카오 인증이 필요합니다", "MEMORY에 저장하려면 먼저 카카오로 인증해 주세요.");
   const pending = state.pending; if (!pending) return;
   const button = document.querySelector("[data-preview-confirm]"); if (button) button.disabled = true;
   try {
@@ -289,7 +289,7 @@ function render() {
 
 async function handleCommand(event) {
   event.preventDefault(); const text=$("ariaCommandInput").value.trim(); if(!text)return;
-  if(!state.session)return message("로그인이 필요합니다","MEMORY를 사용하려면 로그인 링크로 인증해 주세요.");
+  if(!state.session)return message("카카오 인증이 필요합니다","MEMORY를 사용하려면 카카오로 인증해 주세요.");
   const result=interpret(text);
   if(result.action==="query"){
     state.period=result.period; document.querySelector(`[data-aria-period="${result.period}"]`)?.click();
@@ -300,16 +300,15 @@ async function handleCommand(event) {
   if(result.action==="status")return statusPreview(result.item,result.status);
   if(result.action==="edit")return editPreview(result.item,result.date,result.time);
 }
-async function sendLoginLink() {
-  const email=$("ariaLoginEmail").value.trim(); if(!email)return;
-  const button=$("ariaLoginButton"); button.disabled=true;
-  const { error }=await db.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split("#")[0],shouldCreateUser:false}});
-  button.disabled=false;
-  if(error)message("로그인 링크를 보내지 못했습니다",error.message); else message("이메일을 확인해 주세요",email+" 주소로 안전한 로그인 링크를 보냈습니다.");
+async function signInWithKakao() {
+  const button=$("ariaKakaoLoginButton"); button.disabled=true;
+  const redirectTo=location.origin+location.pathname;
+  const { error }=await db.auth.signInWithOAuth({provider:"kakao",options:{redirectTo}});
+  if(error){button.disabled=false;message("카카오 인증을 시작하지 못했습니다",error.message);}
 }
 async function boot() {
   $("ariaCommandForm").addEventListener("submit",handleCommand);
-  $("ariaLoginButton").addEventListener("click",sendLoginLink);
+  $("ariaKakaoLoginButton").addEventListener("click",signInWithKakao);
   document.querySelectorAll("[data-aria-period]").forEach(button=>button.addEventListener("click",()=>{
     state.period=button.dataset.ariaPeriod;
     document.querySelectorAll("[data-aria-period]").forEach(x=>x.classList.toggle("active",x===button)); render();
@@ -317,7 +316,7 @@ async function boot() {
   const { data:{session}, error }=await db.auth.getSession();
   if(error){setSync("인증 확인 오류","error");$("ariaLogin").hidden=false;return;}
   state.session=session; $("ariaLogin").hidden=!!session;
-  if(!session){setSync("로그인 필요","error");render();return;}
+  if(!session){setSync("카카오 인증 필요","error");render();return;}
   await loadItems();
   db.auth.onAuthStateChange((_event,next)=>{state.session=next;$("ariaLogin").hidden=!!next;next?loadItems():(state.items=[],render());});
 }
