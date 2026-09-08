@@ -1,4 +1,7 @@
-/* AI OFFICE 2.1.1 · SMART VISUAL RESTORE */
+/* AI OFFICE 2.1.2 · SMART VISUAL RESTORE · persistent visual fix */
+/* v2.1.0 compactLegacy may add aria-smart-hidden after 1s. Keep the restored main visual visible. */
+.aria-smart-active main.shell > #aswVisualMain,
+.aria-smart-active main.shell > #aswVisualMain.aria-smart-hidden{display:block!important}
 .asw-visual-main{margin:0 0 14px;border-radius:22px;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:#020617;box-shadow:0 14px 36px rgba(2,6,23,.22)}
 .asw-visual-main img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;background:#020617}
 .asw-aria-visual{margin:0 0 14px;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.72)}
