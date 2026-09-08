@@ -7,6 +7,7 @@ const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
 });
 const SEOUL_TZ = "Asia/Seoul";
 const AI_OFFICE_AUTH_RETURN_URL = "https://ipma1822-png.github.io/ai-office/";
+const LOCAL_TASK_STORAGE_KEY = "ipma_ai_office_tasks_v1";
 const $ = id => document.getElementById(id);
 const state = { session: null, items: [], period: "today", pending: null };
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
@@ -57,6 +58,39 @@ function closePreview() { state.pending = null; $("ariaPreview").hidden = true; 
 function message(title, body) {
   showPreview(`<h3>${esc(title)}</h3><p>${esc(body)}</p><div class="aria-preview-actions"><button type="button" data-preview-close>닫기</button></div>`);
   bindPreview();
+}
+
+function loadLocalTasks() {
+  try {
+    const raw = localStorage.getItem(LOCAL_TASK_STORAGE_KEY);
+    const tasks = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(tasks)) return [];
+    return tasks.filter(t => t && t.title).map(t => ({
+      id:`local-task:${t.id || t.title}`,
+      type:"task",
+      title:t.title,
+      start_at:t.due ? toIso(t.due,"23:59") : null,
+      status:t.done ? "done" : "in_progress",
+      priority:t.priority || "normal",
+      location:t.project || "",
+      dday_enabled:false,
+      _local:true
+    }));
+  } catch (e) { return []; }
+}
+function localTasksForPeriod(period) {
+  const rows = loadLocalTasks();
+  const [start,end] = periodRange(period);
+  if (!start) return rows;
+  return rows.filter(item => { const d=itemDate(item); return d && d>=start && d<=end; });
+}
+function dedupeItems(items) {
+  const seen = new Set();
+  return items.filter(item => {
+    const key = `${item.title}|${itemDate(item)}|${item.type}`;
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
 }
 
 function parseDate(text) {
@@ -238,31 +272,41 @@ function ddayText(item) {
 }
 function card(item, dday = false) {
   const dt=localDateTime(item.start_at); const inactive=["done","cancelled"].includes(item.status);
-  return `<article class="aria-card ${esc(item.status)}" data-item-id="${esc(item.id)}"><div class="aria-card-time">${dday?ddayText(item):(isTask(item)&&dt.time==="23:59"?"마감":esc(dt.time))}</div><div class="aria-card-main"><b>${esc(item.title)}</b><small>${esc(dt.date)} · ${esc(typeLabel(item.type))}${item.location?" · "+esc(item.location):""} · ${esc(statusLabel(item.status))}</small></div><div class="aria-card-actions"><button type="button" data-item-edit>수정</button>${isTask(item)&&!inactive?'<button type="button" data-item-done>완료</button>':""}${!inactive?'<button type="button" data-item-cancel>취소</button>':""}</div></article>`;
+  const actions=item._local?"":`<div class="aria-card-actions"><button type="button" data-item-edit>수정</button>${isTask(item)&&!inactive?'<button type="button" data-item-done>완료</button>':""}${!inactive?'<button type="button" data-item-cancel>취소</button>':""}</div>`;
+  return `<article class="aria-card ${esc(item.status)}${item._local?' local-task':''}" data-item-id="${esc(item.id)}"><div class="aria-card-time">${dday?ddayText(item):(isTask(item)&&dt.time==="23:59"?"마감":esc(dt.time))}</div><div class="aria-card-main"><b>${esc(item.title)}</b><small>${esc(dt.date)} · ${item._local?'등록 업무':esc(typeLabel(item.type))}${item.location?" · "+esc(item.location):""} · ${esc(statusLabel(item.status))}</small></div>${actions}</article>`;
 }
 function setList(id, items, dday=false) { $(id).innerHTML = items.length ? items.map(x=>card(x,dday)).join("") : '<p class="aria-empty">등록된 항목이 없습니다.</p>'; }
 function render() {
   const today=seoulYmd(), active=state.items.filter(x=>!["done","cancelled"].includes(x.status));
+  const localAll=loadLocalTasks();
+  const localActive=localAll.filter(x=>!["done","cancelled"].includes(x.status));
   const todaySchedules=active.filter(x=>!isTask(x)&&itemDate(x)===today);
-  const todayTasks=active.filter(x=>isTask(x)&&itemDate(x)===today);
-  const overdue=active.filter(x=>isTask(x)&&itemDate(x)&&itemDate(x)<today);
+  const localTodayTasks=localActive.filter(x=>itemDate(x)===today);
+  const todayTasks=dedupeItems([...active.filter(x=>isTask(x)&&itemDate(x)===today),...localTodayTasks]);
+  const localTodayImportant=localTodayTasks.filter(x=>x.priority==="high");
+  const todayScheduleView=todaySchedules.length?todaySchedules:(localTodayImportant.length?localTodayImportant:localTodayTasks.slice(0,3));
+  const overdue=dedupeItems([...active.filter(x=>isTask(x)&&itemDate(x)&&itemDate(x)<today),...localActive.filter(x=>itemDate(x)&&itemDate(x)<today)]);
   const ddays=active.filter(x=>x.dday_enabled&&itemDate(x)).sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
-  $("ariaTodayCount").textContent=todaySchedules.length;
-  $("ariaOpenTaskCount").textContent=active.filter(isTask).length;
+  $("ariaTodayCount").textContent=todayScheduleView.length;
+  $("ariaOpenTaskCount").textContent=active.filter(isTask).length+localActive.length;
   $("ariaDdayCount").textContent=ddays.length;
   const periodItems=filteredItems();
+  const localPeriod=localTasksForPeriod(state.period);
   if(state.period==="today"){
-    setList("ariaScheduleList",todaySchedules); setList("ariaTaskList",todayTasks); setList("ariaOverdueList",overdue); setList("ariaDdayList",ddays,true);
+    $("ariaTodayScheduleSection").querySelector("h3").textContent="오늘 주요 일정";
+    $("ariaTodayTaskSection").querySelector("h3").textContent="오늘 해야 할 업무";
+    setList("ariaScheduleList",todayScheduleView); setList("ariaTaskList",todayTasks); setList("ariaOverdueList",overdue); setList("ariaDdayList",ddays,true);
     ["ariaTodayScheduleSection","ariaTodayTaskSection","ariaOverdueSection","ariaDdaySection"].forEach(id=>$(id).hidden=false);
     $("ariaEmpty").hidden=true;
   } else {
-    setList("ariaScheduleList",periodItems.filter(x=>!isTask(x))); setList("ariaTaskList",periodItems.filter(isTask));
+    setList("ariaScheduleList",periodItems.filter(x=>!isTask(x)));
+    setList("ariaTaskList",dedupeItems([...periodItems.filter(isTask),...localPeriod]));
     $("ariaTodayScheduleSection").hidden=false; $("ariaTodayTaskSection").hidden=false; $("ariaOverdueSection").hidden=true; $("ariaDdaySection").hidden=true;
     $("ariaTodayScheduleSection").querySelector("h3").textContent=state.period==="week"?"이번 주 일정":state.period==="month"?"이번 달 일정":"전체 일정";
     $("ariaTodayTaskSection").querySelector("h3").textContent=state.period==="week"?"이번 주 업무":state.period==="month"?"이번 달 업무":"전체 업무";
   }
-  document.querySelectorAll(".aria-card").forEach(el=>{
-    const item=state.items.find(x=>x.id===el.dataset.itemId);
+  document.querySelectorAll(".aria-card:not(.local-task)").forEach(el=>{
+    const item=state.items.find(x=>x.id===el.dataset.itemId); if(!item)return;
     el.querySelector("[data-item-edit]")?.addEventListener("click",()=>editPreview(item));
     el.querySelector("[data-item-done]")?.addEventListener("click",()=>statusPreview(item,"done"));
     el.querySelector("[data-item-cancel]")?.addEventListener("click",()=>statusPreview(item,"cancelled"));
@@ -270,13 +314,14 @@ function render() {
   const topToday = document.querySelector(".priority-strip article:nth-child(1) b");
   const topNext = document.querySelector(".priority-strip article:nth-child(2) b");
   const topDday = document.querySelector(".priority-strip article:nth-child(3) b");
-  if(topToday) topToday.textContent=todaySchedules[0]?.title||todayTasks[0]?.title||"등록된 업무 없음";
-  if(topNext) topNext.textContent=active.find(x=>itemDate(x)>=today)?.title||"예정 없음";
+  if(topToday) topToday.textContent=todayScheduleView[0]?.title||todayTasks[0]?.title||"등록된 업무 없음";
+  const combinedFuture=dedupeItems([...active,...localActive]).filter(x=>itemDate(x)>=today).sort((a,b)=>itemDate(a).localeCompare(itemDate(b)));
+  if(topNext) topNext.textContent=combinedFuture[0]?.title||"예정 없음";
   if(topDday) topDday.textContent=ddays[0]?ddayText(ddays[0]):"없음";
   const legacyTimeline=document.querySelector(".schedule-summary .timeline");
   if(legacyTimeline){
-    const upcoming=active.filter(x=>!isTask(x)&&itemDate(x)>=today).slice(0,4);
-    legacyTimeline.innerHTML=upcoming.length?upcoming.map(x=>{const dt=localDateTime(x.start_at);return `<div class="timeline-item"><time>${esc(dt.date.slice(5).replace("-","."))}</time><span></span><p><b>${esc(x.title)}</b><small>${esc(x.location||typeLabel(x.type))}</small></p><em>${esc(statusLabel(x.status))}</em></div>`;}).join(""):'<p class="aria-empty">등록된 예정 일정이 없습니다.</p>';
+    const upcoming=dedupeItems([...active.filter(x=>!isTask(x)),...localActive]).filter(x=>itemDate(x)>=today).sort((a,b)=>itemDate(a).localeCompare(itemDate(b))).slice(0,4);
+    legacyTimeline.innerHTML=upcoming.length?upcoming.map(x=>{const dt=localDateTime(x.start_at);return `<div class="timeline-item"><time>${esc(dt.date.slice(5).replace("-","."))}</time><span></span><p><b>${esc(x.title)}</b><small>${esc(x.location||(x._local?'등록 업무':typeLabel(x.type)))}</small></p><em>${esc(statusLabel(x.status))}</em></div>`;}).join(""):'<p class="aria-empty">등록된 예정 일정이 없습니다.</p>';
   }
   const legacyDday=document.querySelector(".dday-summary");
   if(legacyDday){
@@ -335,5 +380,7 @@ async function boot() {
   if(!session){setSync("카카오 인증 필요","error");render();return;}
   await loadItems();
   db.auth.onAuthStateChange((_event,next)=>{state.session=next;$("ariaLogin").hidden=!!next;next?loadItems():(state.items=[],render());});
+  window.addEventListener("storage",e=>{if(e.key===LOCAL_TASK_STORAGE_KEY)render();});
+  setInterval(render,2000);
 }
 boot();
