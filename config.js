@@ -9,10 +9,10 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   sessionMaxAgeHours: 12
 });
 
-// AI OFFICE 3.5.8 · GEN NEWS workflow modules
+// AI OFFICE 3.6.4 · GEN NEWS workflow modules
 (()=>{
   const modules=[
-    './gen-news-v350.js?v=3.5.0',
+    './gen-news-v350.js?v=3.6.4',
     './gen-newsroom-v350.js?v=3.6.3',
     './gen-auto-draft-v351.js?v=3.5.6',
     './gen-auto-news-v352.js?v=3.5.3',
@@ -21,7 +21,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     './gen-news-desk-v355.js?v=3.5.5',
     './gen-factcheck-v357.js?v=3.5.7',
     './gn24-brand-lock-v358.js?v=3.6.2',
-    './gn24-publish-bridge-v350.js?v=3.5.0'
+    './gn24-publish-bridge-v350.js?v=3.6.4'
   ];
   modules.forEach(src=>{
     const script=document.createElement('script');
