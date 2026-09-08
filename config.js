@@ -20,7 +20,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     './gen-news-compact-v354.js?v=3.5.4',
     './gen-news-desk-v355.js?v=3.5.5',
     './gen-factcheck-v357.js?v=3.5.7',
-    './gn24-brand-lock-v358.js?v=3.5.8',
+    './gn24-brand-lock-v358.js?v=3.6.2',
     './gn24-publish-bridge-v350.js?v=3.5.0'
   ];
   modules.forEach(src=>{
