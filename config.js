@@ -1,5 +1,5 @@
 window.AI_OFFICE_CONFIG = Object.freeze({
-  version: "2.1.1",
+  version: "2.1.2",
   supabaseUrl: "https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey: "sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
   adminAuthEmail: "class-admin@ipma.kr",
@@ -9,11 +9,11 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   sessionMaxAgeHours: 12
 });
 
-// AI OFFICE 3.6.5 · GEN NEWS workflow modules + ARIA SMART WORKSPACE v2.1.1
+// AI OFFICE 3.6.5 · GEN NEWS workflow modules + ARIA SMART WORKSPACE v2.1.2
 (()=>{
   const styles=[
     {id:'ariaSmartWorkspace210Style',href:'./aria-smart-workspace-v210.css?v=2.1.0'},
-    {id:'ariaSmartVisualRestore211Style',href:'./aria-smart-visual-restore-v211.css?v=2.1.1'}
+    {id:'ariaSmartVisualRestore211Style',href:'./aria-smart-visual-restore-v211.css?v=2.1.2'}
   ];
   styles.forEach(({id,href})=>{
     if(document.getElementById(id))return;
@@ -37,7 +37,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     {id:'systemVersion365Script',src:'./system-version-v365.js?v=3.6.6'},
     {src:'./gn24-publish-bridge-v350.js?v=3.6.10'},
     {id:'ariaSmartWorkspace210Script',src:'./aria-smart-workspace-v210.js?v=2.1.0'},
-    {id:'ariaSmartVisualRestore211Script',src:'./aria-smart-visual-restore-v211.js?v=2.1.1'}
+    {id:'ariaSmartVisualRestore211Script',src:'./aria-smart-visual-restore-v211.js?v=2.1.2'}
   ];
   modules.forEach(({id,src})=>{
     if(id&&document.getElementById(id))return;
