@@ -4,7 +4,7 @@ const ARTICLE_KEY='ipma_ai_office_article_drafts_v1',QUEUE_KEY='ipma_ai_office_g
 const LOGO='https://news24.ai.kr/assets/images/logos/gn24-showroom-logo.jpg';
 const PROMPT_GUARD='NO TEXT. NO LETTERS. NO TYPOGRAPHY. NO CAPTION. NO HEADLINE. NO WATERMARK.';
 const BRAND_SPEC_VERSION='GN24-IMAGE-BRAND-v1';
-const IMAGE_URL_MODULE='./gn24-image-url-v359.js?v=3.5.9';
+const IMAGE_URL_MODULE='./gn24-image-url-v359.js?v=3.6.10';
 const FINAL_HOTFIX_MODULE='./gn24-final-approve-hotfix-v361.js?v=3.6.2';
 const $=id=>document.getElementById(id);
 const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
