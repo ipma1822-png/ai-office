@@ -9,11 +9,12 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   sessionMaxAgeHours: 12
 });
 
-// AI OFFICE 3.5.0 · GEN NEWS workflow modules
+// AI OFFICE 3.5.1 · GEN NEWS workflow modules
 (()=>{
   const modules=[
     './gen-news-v350.js?v=3.5.0',
     './gen-newsroom-v350.js?v=3.5.0',
+    './gen-auto-draft-v351.js?v=3.5.1',
     './gn24-publish-bridge-v350.js?v=3.5.0'
   ];
   modules.forEach(src=>{
