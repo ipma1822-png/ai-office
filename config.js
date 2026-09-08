@@ -16,6 +16,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     './gen-newsroom-v350.js?v=3.5.0',
     './gen-auto-draft-v351.js?v=3.5.1',
     './gen-auto-news-v352.js?v=3.5.3',
+    './executive-clean-v353.js?v=3.5.3',
     './gn24-publish-bridge-v350.js?v=3.5.0'
   ];
   modules.forEach(src=>{
