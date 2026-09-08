@@ -27,6 +27,7 @@
       <span><b>AI OFFICE 2.0</b><small>IPMA AI 사무국</small></span>
     </a>
     <div class="top-actions">
+      <span class="version-chip">SYSTEM v3.6.5</span>
       <span class="version-chip">ARIA MEMORY v2.0.3</span>
       <span class="status"><i></i> PHASE 1</span>
       <a class="ghost" href="https://jeonseongkweon-cloud.github.io/kmt-landing/admin-hub/">관리자 허브</a>
@@ -43,7 +44,7 @@
         <p class="eyebrow">AI OFFICE · DAILY COMMAND CENTER</p>
         <h1>좋은 아침입니다.<br><strong>AI 사무국에 출근하셨습니다.</strong></h1>
         <p class="welcome-copy">기존 GMS · IDP · SPARK를 다시 만들지 않고, 필요한 정보를 읽고 연결하는 상위 업무운영 HOME입니다.</p>
-        <div class="build-line"><span>현재 버전</span><b>AI OFFICE 2.0</b><em>PHASE 1 · ARIA MEMORY v2.0.3</em></div>
+        <div class="build-line"><span>현재 버전</span><b>AI OFFICE 2.0</b><em>SYSTEM v3.6.5 · PHASE 1 · ARIA MEMORY v2.0.3</em></div>
       </div>
       <div class="clock-card" aria-label="현재 시각">
         <span id="todayLabel">오늘</span>
@@ -53,7 +54,6 @@
     </section>
 
     <section class="aria-memory" id="ariaMemory" aria-labelledby="ariaMemoryTitle">
-      <div class="aria-memory-head">
         <div><p class="eyebrow">ARIA · PERSONAL SECRETARY</p><h2 id="ariaMemoryTitle">아리아가 일정과 업무를 기억합니다</h2><p>말하듯 입력하면 내용을 정리해 보여드리고, 확인한 뒤에만 Supabase MEMORY에 저장합니다.</p></div>
         <span class="aria-sync" id="ariaSyncStatus">연결 확인 중</span>
       </div>
@@ -77,141 +77,3 @@
         <button type="button" data-aria-period="month">이번 달</button>
         <button type="button" data-aria-period="all">전체</button>
       </nav>
-
-      <div class="aria-summary" aria-label="ARIA 실시간 요약">
-        <article><span>오늘 일정</span><b id="ariaTodayCount">0</b><small>건</small></article>
-        <article><span>미완료 업무</span><b id="ariaOpenTaskCount">0</b><small>건</small></article>
-        <article><span>D-DAY</span><b id="ariaDdayCount">0</b><small>건</small></article>
-      </div>
-
-      <div class="aria-section" id="ariaTodayScheduleSection"><h3>오늘 주요 일정</h3><div class="aria-list" id="ariaScheduleList"></div></div>
-      <div class="aria-section" id="ariaTodayTaskSection"><h3>오늘 해야 할 업무</h3><div class="aria-list" id="ariaTaskList"></div></div>
-      <div class="aria-section" id="ariaOverdueSection"><h3>지연된 미완료 업무</h3><div class="aria-list" id="ariaOverdueList"></div></div>
-      <div class="aria-section" id="ariaDdaySection"><h3>D-DAY</h3><div class="aria-list" id="ariaDdayList"></div></div>
-      <p class="aria-empty" id="ariaEmpty" hidden>이 기간에 등록된 일정이나 업무가 없습니다.</p>
-    </section>
-
-    <section class="priority-strip" aria-label="핵심 업무 현황">
-      <article><span>지금 가장 중요한 일</span><b>서울 전략회의 준비</b><small>첫 실전 PROJECT</small></article>
-      <article><span>다음 중요 일정</span><b>9월 4일</b><small>국제드론순찰대 서울 전략회의</small></article>
-      <article><span>D-DAY</span><b id="dday">계산 중</b><small>2026.09.04 기준</small></article>
-      <article><span>시스템 원칙</span><b>REUSE → CONNECT</b><small>중복개발 금지</small></article>
-    </section>
-
-    <section class="section-head">
-      <div><p class="eyebrow">WORKSPACE</p><h2>오늘의 업무 공간</h2></div>
-      <p>12차에서는 GEN의 뉴스 ACTION을 실제 브리핑 보드로 확장합니다. 외부 뉴스 API나 자동 기사발행은 연결하지 않고, 확인된 뉴스 항목을 안전하게 모아 우선순위 브리핑으로 정리합니다.</p>
-    </section>
-
-    <section class="workspace-grid">
-      <button class="work-card" data-panel="briefing"><span class="icon">☀</span><strong>출근 브리핑</strong><small>오늘의 핵심을 한눈에</small><em>OPEN</em></button>
-      <button class="work-card active" data-panel="today"><span class="icon">📅</span><strong>오늘</strong><small>일정 · 업무 · 준비사항</small><em>3차</em></button>
-      <button class="work-card" data-panel="week"><span class="icon">🎯</span><strong>이번 주</strong><small>핵심목표 · 마감 · 진행률</small><em>3차</em></button>
-      <button class="work-card" data-panel="month"><span class="icon">🗓</span><strong>이번 달</strong><small>행사 · 프로젝트 · D-Day</small><em>3차</em></button>
-      <button class="work-card" data-panel="schedule"><span class="icon">🕘</span><strong>일정</strong><small>오늘 · 예정 · 준비사항</small><em>4차</em></button>
-      <button class="work-card" data-panel="dday"><span class="icon">⏳</span><strong>D-DAY</strong><small>중요 일정까지 남은 시간</small><em>4차</em></button>
-      <button class="work-card" data-panel="task"><span class="icon">☑</span><strong>TASK</strong><small>해야 할 일 · 마감 · 완료관리</small><em>5차</em></button>
-      <button class="work-card" data-panel="project"><span class="icon">📊</span><strong>PROJECT</strong><small>목적 · TASK · 결정 · 후속업무</small><em>6차</em></button>
-      <button class="work-card" data-panel="meeting"><span class="icon">👥</span><strong>회의</strong><small>안건 · 결정 · 담당 · 후속업무</small><em>7차</em></button>
-      <button class="work-card" data-panel="library"><span class="icon">📂</span><strong>자료</strong><small>기존 자료 검색 · 호출 · 표시</small><em>CONNECT</em></button>
-      <button class="work-card" data-panel="aria"><span class="icon">A</span><strong>ARIA · 아리아</strong><small>전략 · 일정 · TASK · PROJECT · 회의</small><em>8차</em></button>
-      <button class="work-card" data-panel="gen"><span class="icon">G</span><strong>GEN · 젠</strong><small>뉴스 · 기사 · 콘텐츠 · 이미지 · 홍보</small><em>8차</em></button>
-    </section>
-
-    <section class="period-board" aria-label="오늘 주간 월간 업무요약">
-      <article class="period-card selected" data-jump="today">
-        <div class="period-head"><span>📅</span><div><p>TODAY</p><h3 id="todayCardTitle">오늘</h3></div><b>운영</b></div>
-        <ul>
-          <li><strong>핵심</strong><span>서울 전략회의 준비</span></li>
-          <li><strong>일정</strong><span>다음 일정 9월 4일</span></li>
-          <li><strong>상태</strong><span>업무 DB 연결 전 · 읽기 중심</span></li>
-        </ul>
-      </article>
-      <article class="period-card" data-jump="week">
-        <div class="period-head"><span>🎯</span><div><p>THIS WEEK</p><h3 id="weekCardTitle">이번 주</h3></div><b>계획</b></div>
-        <ul>
-          <li><strong>목표</strong><span>AI 사무국 업무기반 확립</span></li>
-          <li><strong>순서</strong><span>오늘/주간/월간 → 일정 → TASK</span></li>
-          <li><strong>보호</strong><span>GMS · 인증 · Supabase 무수정</span></li>
-        </ul>
-      </article>
-      <article class="period-card" data-jump="month">
-        <div class="period-head"><span>🗓</span><div><p>THIS MONTH</p><h3 id="monthCardTitle">이번 달</h3></div><b>전망</b></div>
-        <ul>
-          <li><strong>프로젝트</strong><span>서울 전략회의를 첫 실전 사례로 적용</span></li>
-          <li><strong>연결</strong><span>PROJECT · 회의 · 자료 구조 준비</span></li>
-          <li><strong>원칙</strong><span>기존 기능 우선 재사용</span></li>
-        </ul>
-      </article>
-    </section>
-
-    <section class="schedule-board" id="scheduleBoard">
-      <div class="section-head"><div><p class="eyebrow">SCHEDULE · 4차</p><h2>일정</h2></div><p>현재 확인된 일정만 표시합니다. 임의 일정 생성 및 DB 쓰기는 하지 않습니다.</p></div>
-      <div class="schedule-actions"><button class="soft-button" data-panel="schedule">일정 자세히</button></div>
-      <div class="schedule-list"><article><time>09.02</time><div><b>오늘</b><strong>AI 사무국 4차 · 일정/D-Day 기반 구축</strong></div><span>진행</span></article><article><time>09.04</time><div><b>국제드론순찰대 서울 전략회의</b><strong>첫 실전 PROJECT 중요 일정</strong></div><span>D-DAY</span></article></div>
-    </section>
-
-    <section class="dday-board">
-      <div><p class="eyebrow">D-DAY · 4차</p><h2 id="ddayLarge">계산 중</h2><p>국제드론순찰대 서울 전략회의</p></div>
-      <div class="dday-meta"><b>목표일 2026.09.04</b><span>Asia/Seoul 기준</span><button class="soft-button" data-panel="dday">D-Day 자세히</button></div>
-    </section>
-
-    <section class="task-section" id="taskBoard">
-      <div class="section-head"><div><p class="eyebrow">TASK · 5차</p><h2>해야 할 일</h2></div><p>일정과 TASK를 구분해 관리하고, TASK는 PROJECT와 연결할 수 있도록 준비합니다.</p></div>
-      <div class="task-summary"><article><span>전체</span><b id="taskTotal">0</b></article><article><span>진행</span><b id="taskOpen">0</b></article><article><span>완료</span><b id="taskDone">0</b></article></div>
-      <form class="task-form" id="taskForm"><input id="taskTitle" maxlength="90" placeholder="해야 할 일을 입력하세요" required><input id="taskDue" type="date"><select id="taskPriority"><option value="high">중요</option><option value="normal" selected>보통</option><option value="low">낮음</option></select><select id="taskProject"><option value="">프로젝트 없음</option><option value="idp-seoul">서울 전략회의</option></select><button type="submit">+ TASK 추가</button></form>
-      <div class="task-filter"><button type="button" class="active" data-task-filter="all">전체</button><button type="button" data-task-filter="open">진행</button><button type="button" data-task-filter="done">완료</button></div>
-      <div class="task-list" id="taskList"></div>
-      <p class="task-note">이 브라우저에만 저장 · Supabase 쓰기 없음</p>
-    </section>
-
-    <section class="task-policy"><div><p class="eyebrow">TASK POLICY</p><h2>5차 운영 원칙</h2></div><div class="policy-grid"><article><b>일정 ≠ TASK</b><span>일정은 언제, TASK는 무엇을 할지 관리합니다.</span></article><article><b>TASK → PROJECT</b><span>각 업무는 관련 프로젝트와 연결할 수 있도록 구성합니다.</span></article><article><b>미완료 유지</b><span>완료되지 않은 업무를 자동 삭제하지 않습니다.</span></article><article><b>기존 시스템 보호</b><span>GMS · 인증 · Supabase · RLS · Realtime은 수정하지 않습니다.</span></article></div></section>
-
-    <section class="project-section" id="projectBoard">
-      <div class="project-hero"><div><p class="eyebrow">PROJECT · 6차</p><h2>국제드론순찰대 서울 전략회의</h2><p>첫 실전 PROJECT입니다. TASK를 연결하고 회의 전 준비부터 결정·미결·후속업무까지 한 흐름으로 관리합니다.</p></div><span>준비</span></div>
-      <div class="project-kpis"><article><span>일정</span><b>2026.09.04</b><small>서울 전략회의</small></article><article><span>연결 TASK</span><b id="projectTaskCount">0</b><small>서울 전략회의 TASK</small></article><article><span>완료 TASK</span><b id="projectDoneCount">0</b><small>완료 처리된 업무</small></article><article><span>진행률</span><b id="projectProgress">0%</b><small>연결 TASK 기준 자동 계산</small></article></div>
-      <div class="project-grid"><article class="project-main"><h3>PROJECT 기본정보</h3><dl><div><dt>목적</dt><dd>국제드론순찰대의 정체성 · 조직체계 · 회원제도 · 회비 · AI 사무국 · SPARK · 향후 공동사업을 검토하고 실행 방향을 정리한다.</dd></div><div><dt>상태</dt><dd><select id="projectStatus"><option>준비</option><option>진행</option><option>보류</option><option>완료</option></select></dd></div><div><dt>장소</dt><dd><input id="projectPlace" value="서울"></dd></div><div><dt>참석자</dt><dd><input id="projectPeople" placeholder="확정 후 입력"></dd></div><div><dt>관련자료</dt><dd>조직도 · 회원등급안 · 회비안 · SPARK 비전 · Galaxy Tab 자료</dd></div></dl><button class="soft-button" id="saveProject">PROJECT 기본정보 저장</button><small>AI OFFICE 전용 localStorage 저장 · Supabase 쓰기 없음</small></article><article class="project-tasks"><h3>연결 TASK</h3><div id="projectTaskList"></div><button class="soft-button" data-panel="task">TASK 보기</button></article></div>
-      <div class="decision-grid"><article><span>✓</span><p>DECISIONS</p><h3>결정사항</h3><div id="decisionList"></div><form data-project-form="decisions"><input maxlength="100" placeholder="결정사항 입력" required><button>추가</button></form></article><article><span>?</span><p>UNRESOLVED</p><h3>미결사항</h3><div id="unresolvedList"></div><form data-project-form="unresolved"><input maxlength="100" placeholder="미결사항 입력" required><button>추가</button></form></article><article><span>→</span><p>FOLLOW-UP</p><h3>후속업무</h3><div id="followupList"></div><form data-project-form="followups"><input maxlength="100" placeholder="후속업무 입력" required><button>추가</button></form></article></div>
-    </section>
-
-    <section class="meeting-section" id="meetingBoard">
-      <div class="meeting-hero"><div><p class="eyebrow">MEETING · 7차</p><h2>국제드론순찰대 서울 전략회의</h2><p>PROJECT와 연결된 첫 회의입니다. 회의 전 준비와 회의 후 실행기록을 한곳에서 관리합니다.</p></div><span id="meetingStateBadge">준비</span></div>
-      <div class="meeting-meta"><label>회의일<input id="meetingDate" type="date" value="2026-09-04"></label><label>시작시간<input id="meetingTime" type="time" value="14:00"></label><label>장소<input id="meetingPlace" value="서울"></label><label>상태<select id="meetingStatus"><option>준비</option><option>진행</option><option>완료</option></select></label><div class="wide"><b>회의 목적</b><span>국제드론순찰대의 정체성 · 조직체계 · 회원제도 · 회비 · AI 사무국 · SPARK · 향후 공동사업의 실행 방향을 정리한다.</span></div><div><b>참석자</b><span id="meetingPeoplePreview">확정 후 입력</span></div><div><b>준비자료</b><span>조직도 · 회원등급안 · 회비안 · SPARK 비전 · Galaxy Tab 자료</span></div></div>
-      <div class="meeting-actions"><button class="soft-button" id="saveMeeting">회의 기본정보 저장</button><small>AI OFFICE 전용 localStorage · Supabase 쓰기 없음</small></div>
-      <div class="meeting-stage-title"><div><p>BEFORE</p><h3>회의 전 준비</h3><span>안건 · 질문 · 결정 필요사항</span></div></div>
-      <div class="meeting-before-grid"><article><b>01</b><h4>안건</h4><div id="agendaList"></div><form data-meeting-form="agenda"><input maxlength="120" placeholder="회의 안건 입력" required><button>추가</button></form></article><article><b>02</b><h4>질문</h4><div id="questionList"></div><form data-meeting-form="questions"><input maxlength="120" placeholder="확인할 질문 입력" required><button>추가</button></form></article><article><b>03</b><h4>결정 필요사항</h4><div id="needDecisionList"></div><form data-meeting-form="needs"><input maxlength="120" placeholder="회의에서 결정할 사항" required><button>추가</button></form></article></div>
-      <div class="meeting-stage-title after"><div><p>AFTER</p><h3>회의 후 기록</h3><span>결정 · 미결 · 담당/후속업무 · 다음 회의</span></div></div>
-      <div class="meeting-after-grid"><article><span>✓</span><h4>결정사항</h4><div id="meetingDecisionList"></div><form data-meeting-form="decisions"><input maxlength="120" placeholder="결정사항 입력" required><button>추가</button></form></article><article><span>?</span><h4>미결사항</h4><div id="meetingUnresolvedList"></div><form data-meeting-form="unresolved"><input maxlength="120" placeholder="미결사항 입력" required><button>추가</button></form></article><article><span>→</span><h4>담당 · 후속업무</h4><div id="meetingFollowupList"></div><form class="followup-form" data-meeting-form="followups"><input maxlength="100" placeholder="후속업무" required><input maxlength="40" placeholder="담당"><input type="date"><button>추가</button></form></article><article><label>다음 회의<input id="nextMeetingDate" type="date"></label><label>메모<input id="nextMeetingNote" maxlength="120" placeholder="다음 회의 목적 또는 준비사항"></label><button class="soft-button" id="saveNextMeeting">다음 회의 저장</button></article></div>
-      <div class="meeting-project-link"><div><p>PROJECT CONNECTION</p><h3>서울 전략회의 PROJECT와 연결</h3><span>회의에서 확정한 결정사항 · 미결사항 · 후속업무를 PROJECT 기록에 반영할 수 있습니다.</span></div><button id="syncMeetingToProject">회의기록 → PROJECT 반영</button><small>중복 문구는 자동으로 건너뜁니다.</small></div>
-    </section>
-
-    <section class="secretary-section" id="secretaryBoard">
-      <div class="section-head"><div><p class="eyebrow">AI SECRETARY · 9차</p><h2>아리아 · 젠 업무분장</h2></div><p>두 AI 사무국장은 기존 시스템을 대신하지 않습니다. 9차부터 음성 명령과 화면 버튼은 하나의 공통 ACTION 라우터를 사용합니다.</p></div>
-      <div class="secretary-grid"><article class="aria"><div class="secretary-icon">A</div><div><p>ARIA</p><h3>아리아 · 전략/운영 사무국장</h3><div class="secretary-tags"><span>오늘</span><small>오늘 일정·업무 브리핑</small><span>일정 · D-Day</span><small>중요일정과 준비사항</small><span>TASK</span><small>해야 할 일·미완료 업무</small><span>PROJECT</span><small>프로젝트 진행·결정·후속업무</small><span>회의</span><small>회의 전·후 기록과 연결</small><span>주간 운영</span><small>이번 주 목표·마감·진행</small></div></div></article><article class="gen"><div class="secretary-icon">G</div><div><p>GEN</p><h3>젠 · 뉴스/콘텐츠 사무국장</h3><div class="secretary-tags"><span>뉴스</span><small>주요 뉴스·아이디어 준비</small><span>기사</span><small>초안·자료·사진설명 준비</small><span>콘텐츠</span><small>SNS·홍보·발표자료 준비</small><span>이미지</span><small>기존 이미지 호출·표시 연결</small><span>미디어</span><small>음악·영상 호출 · DISPLAY 준비</small><span>자료</span><small>기존 자료 검색·분류·호출</small></div></div></article></div>
-      <div class="human-rule"><b>AI 역할</b><span>조사 · 정리 · 추천 · 준비 · 브리핑</span><em>/</em><b>사람 역할</b><span>검토 · 판단 · 승인 · 결정 · 집행</span></div>
-    </section>
-
-    <section class="action-section" id="actionBoard">
-      <div class="section-head"><div><p class="eyebrow">VOICE + MENU ACTION · 9차</p><h2>말해도, 눌러도 같은 ACTION</h2></div><p>“아리아 오늘 일정 보여줘”, “젠 오늘 뉴스 보여줘”처럼 말하거나 아래 빠른 명령을 누르면 동일한 실행로직이 작동합니다.</p></div>
-      <div class="action-console"><div class="voice-box"><div><b>v0.9.0</b><span>🎙</span><button id="voiceActionButton">눌러서 말하기</button><small>브라우저 음성인식</small></div><p id="voiceTranscript">음성 대기</p><em id="voiceActionStatus">명령을 말하면 여기에 표시됩니다.</em><small id="voiceSupport">음성인식 지원 여부 확인 중</small></div><div class="quick-action-box"><div><h3>빠른 ACTION</h3><span>버튼과 음성은 동일한 ACTION ID 사용</span></div><div class="action-button-grid"><button data-action-id="aria_today"><b>아리아 · 오늘</b><small>“아리아 오늘 보여줘”</small></button><button data-action-id="aria_schedule"><b>아리아 · 일정</b><small>“아리아 오늘 일정 보여줘”</small></button><button data-action-id="aria_task"><b>아리아 · TASK</b><small>“아리아 할 일 보여줘”</small></button><button data-action-id="aria_project"><b>아리아 · PROJECT</b><small>“아리아 서울회의 보여줘”</small></button><button data-action-id="aria_meeting"><b>아리아 · 회의</b><small>“아리아 회의 보여줘”</small></button><button data-action-id="gen_news"><b>젠 · 뉴스</b><small>“젠 오늘 뉴스 보여줘”</small></button><button data-action-id="gen_article"><b>젠 · 기사</b><small>“젠 기사 준비해줘”</small></button><button data-action-id="gen_image"><b>젠 · 이미지</b><small>“젠 이미지 보여줘”</small></button></div></div></div>
-      <div class="action-safety"><b>9차 안전 원칙</b><span>음성은 화면 ACTION 호출까지만 수행합니다.</span><small>회원 승인 · 회비 변경 · 공식발행 · Supabase 쓰기 등은 실행하지 않습니다.</small></div>
-    </section>
-
-    <section class="section-head"><div><p class="eyebrow" id="panelEyebrow">TODAY</p><h2 id="panelTitle">오늘</h2></div><p id="panelFoot">현재 날짜 기준</p></section>
-    <section class="detail-panel" id="detailPanel"></section>
-    <section class="secretary-strip"><div><p>DISPLAY READY · v1.4.0</p><small>※ TASK와 PROJECT는 AI OFFICE 전용 localStorage에만 저장됩니다. 기존 Supabase/GMS 데이터는 수정하지 않습니다.</small></div><article><span>A</span><div><b>AI SECRETARY</b><h3>ARIA · 아리아</h3><p>전략 · 기획 · 조직 · 일정 · 업무 · 프로젝트 · 회의 브리핑을 담당하는 AI 사무국장 영역입니다.</p><button data-panel="aria">아리아 업무 보기</button></div></article><article><span>G</span><div><b>AI SECRETARY</b><h3>GEN · 젠</h3><p>뉴스 · 기사 · 콘텐츠 · 이미지 · 홍보 · SNS · 미디어 업무를 담당하는 AI 사무국장 영역입니다.</p><button data-panel="gen">젠 업무 보기</button></div></article></section>
-
-    <section class="gen-news-section" id="genNewsBoard">
-      <div class="section-head"><div><p class="eyebrow">GEN NEWS BRIEFING · 12차</p><h2>뉴스 브리핑</h2></div><p>확인한 뉴스 제목·출처·요약을 직접 모아 GEN이 우선순위 브리핑으로 정리합니다. 외부 뉴스 자동수집과 기사 자동발행은 아직 연결하지 않습니다.</p></div>
-      <div class="gen-news-grid"><article class="news-input-card"><div><b>v1.4.0 · SAFE NEWS DESK</b><h3>뉴스 항목 등록</h3></div><form id="newsForm"><label>제목<input id="newsTitle" maxlength="120" placeholder="확인한 뉴스 제목" required></label><label>분야<select id="newsCategory"><option>종합</option><option>국제</option><option>정치</option><option>경제</option><option>사회</option><option>안전</option><option>무도스포츠</option><option>드론</option><option>공익</option></select></label><label>중요도<select id="newsPriority"><option value="urgent">긴급</option><option value="high">중요</option><option value="normal" selected>일반</option></select></label><label>출처<input id="newsSource" maxlength="60" placeholder="예: 연합뉴스 / 경찰청 / 확인한 매체" required></label><label class="wide">한줄 요약<input id="newsSummary" maxlength="180" required></label><button type="submit">+ 뉴스 항목 추가</button></form><small>※ 현재는 직접 확인한 정보만 저장하는 로컬 브리핑함입니다. 사실 확인되지 않은 내용을 자동 생성하지 않습니다.</small></article><article class="news-brief-card"><div><p>GEN · DAILY NEWS BRIEFING</p><h3>오늘의 GEN 브리핑</h3><span id="newsBriefingTime">아직 생성 전</span></div><div id="newsBriefing" class="news-briefing"></div><button id="buildNewsBriefing" type="button">브리핑 새로 정리</button></article></div>
-      <div class="news-summary"><article><span>전체</span><b id="newsTotal">0</b></article><article><span>긴급</span><b id="newsUrgent">0</b></article><article><span>중요</span><b id="newsHigh">0</b></article></div>
-      <div id="newsList" class="news-list"></div>
-    </section>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./config.js?v=2.0.5"></script>
-  <script src="./aria-memory.js?v=2.0.3"></script>
-  <script src="./app.js?v=2.0.3"></script>
-</body>
-</html>
