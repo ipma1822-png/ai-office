@@ -2,7 +2,7 @@
 'use strict';
 const ARTICLE_KEY='ipma_ai_office_article_drafts_v1';
 const QUEUE_KEY='ipma_ai_office_gn24_publish_queue_v1';
-const AUTO_IMAGE_URL='https://news24.ai.kr/assets/images/news/2026/09/gn24-public-servant-suicide-prevention-20260908.svg';
+const AUTO_IMAGE_URL='https://news24.ai.kr/assets/images/news/2026/09/gn24-public-servant-suicide-prevention-20260908.png';
 const $=id=>document.getElementById(id);
 const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
 const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
@@ -29,7 +29,7 @@ function renderStatus(url){
 function loadCurrent(){
  const id=$('nr350Id')?.value||'';if(!id||!$('nr359ImageUrl'))return;
  if(id===activeId)return;activeId=id;const a=article(id);let url=String(a?.imageUrl||'');
- if(!url&&isCurrentTestArticle(a)){url=AUTO_IMAGE_URL;$('nr359ImageUrl').value=url;persist();return;}
+ if(isCurrentTestArticle(a)&&(!url||url.endsWith('.svg'))){url=AUTO_IMAGE_URL;$('nr359ImageUrl').value=url;persist();return;}
  $('nr359ImageUrl').value=url;renderStatus(url);
 }
 function install(){
@@ -44,6 +44,6 @@ function install(){
  ['nr350Review','nr350Approval','nr350Preflight','nr350Final','nr350ConfirmFinal'].forEach(id=>$(id)?.addEventListener('click',()=>{persist();if(id==='nr350ConfirmFinal')setTimeout(()=>{const articleId=$('nr350Id')?.value||'';const a=article(articleId);if(articleId&&a)syncQueue(articleId,String(a.imageUrl||''));},150)},true));
  loadCurrent();
 }
-function tick(){install();loadCurrent();const id=$('nr350Id')?.value||'';if(id&&$('nr359ImageUrl')){const a=article(id);if(a&&!a.imageUrl&&isCurrentTestArticle(a)){$('nr359ImageUrl').value=AUTO_IMAGE_URL;persist();return;}if(a&&a.imageUrl!==$('nr359ImageUrl').value&&document.activeElement!==$('nr359ImageUrl')){$('nr359ImageUrl').value=a.imageUrl||'';renderStatus(a.imageUrl||'')}}}
+function tick(){install();loadCurrent();const id=$('nr350Id')?.value||'';if(id&&$('nr359ImageUrl')){const a=article(id);if(a&&isCurrentTestArticle(a)&&(!a.imageUrl||String(a.imageUrl).endsWith('.svg'))){$('nr359ImageUrl').value=AUTO_IMAGE_URL;persist();return;}if(a&&a.imageUrl!==$('nr359ImageUrl').value&&document.activeElement!==$('nr359ImageUrl')){$('nr359ImageUrl').value=a.imageUrl||'';renderStatus(a.imageUrl||'')}}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setInterval(tick,500));else setInterval(tick,500);
 })();
