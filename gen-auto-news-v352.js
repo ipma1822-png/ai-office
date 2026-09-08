@@ -1,0 +1,16 @@
+(()=>{
+'use strict';
+const NEWS_KEY='ipma_ai_office_news_brief_v1';
+const LAST_KEY='ipma_ai_office_gen_auto_news_last_v1';
+const ENDPOINT='https://ojxarsfaewehwjidwgac.supabase.co/functions/v1/ai-office-gen-news';
+const $=id=>document.getElementById(id);
+const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
+const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const normalize=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+function merge(rows){const old=read(NEWS_KEY,[]);const seen=new Set(old.map(x=>normalize(x.title)));const added=[];for(const r of rows||[]){const k=normalize(r.title);if(!k||seen.has(k))continue;seen.add(k);added.push({...r,status:'candidate'});}write(NEWS_KEY,[...old,...added]);return added.length;}
+function status(msg,ok=false){const el=$('genAutoNewsStatus');if(!el)return;el.textContent=msg;el.style.color=ok?'#9ce6b6':'var(--muted)';}
+async function collect(manual=false){const b=$('genAutoNews352');if(b)b.disabled=true;status('GEN이 최신 뉴스를 수집하고 있습니다…');try{const res=await fetch(ENDPOINT,{cache:'no-store'});if(!res.ok)throw new Error('수집 서버 '+res.status);const data=await res.json();const added=merge(data.candidates||[]);localStorage.setItem(LAST_KEY,JSON.stringify({date:today(),at:new Date().toISOString(),count:data.count||0}));status(`최신 뉴스 후보 ${data.count||0}건 확인 · 새 후보 ${added}건 추가`,true);if(added>0)setTimeout(()=>location.reload(),700);}catch(e){status('뉴스 자동수집 실패 · 잠시 후 다시 시도해 주세요');console.error(e);}finally{if(b)b.disabled=false;}}
+function install(){const board=$('genNewsBoard');if(!board||$('genAutoNews352'))return;const note=board.querySelector('.gen-candidate-note')||board.querySelector('.section-head');if(!note)return;const wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:10px 0 14px';wrap.innerHTML='<button type="button" id="genAutoNews352" style="padding:10px 13px;border:1px solid rgba(94,162,255,.45);border-radius:10px;background:rgba(94,162,255,.12);color:#c8ddff;font-weight:900;cursor:pointer">GEN 최신 뉴스 수집</button><span id="genAutoNewsStatus" style="font-size:12px;color:var(--muted)">매일 첫 접속 시 최신 뉴스 후보 3~5건을 자동 확인합니다.</span>';note.insertAdjacentElement('afterend',wrap);$('genAutoNews352').addEventListener('click',()=>collect(true));let last=null;try{last=JSON.parse(localStorage.getItem(LAST_KEY)||'null')}catch(_){}if(!last||last.date!==today())setTimeout(()=>collect(false),900);else status(`오늘 자동수집 완료 · ${last.count||0}건 확인`,true);}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setInterval(install,700));else setInterval(install,700);
+})();
