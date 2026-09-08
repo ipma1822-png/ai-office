@@ -3,7 +3,7 @@
 const ARTICLE_KEY='ipma_ai_office_article_drafts_v1',QUEUE_KEY='ipma_ai_office_gn24_publish_queue_v1';
 const LOGO='https://news24.ai.kr/assets/images/logos/gn24-showroom-logo.jpg';
 const IMAGE_URL_MODULE='./gn24-image-url-v359.js?v=3.5.9';
-const FINAL_HOTFIX_MODULE='./gn24-final-approve-hotfix-v361.js?v=3.6.1';
+const FINAL_HOTFIX_MODULE='./gn24-final-approve-hotfix-v361.js?v=3.6.2';
 const $=id=>document.getElementById(id);
 const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
 const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
