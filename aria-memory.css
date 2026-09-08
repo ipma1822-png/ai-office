@@ -24,12 +24,13 @@
 .aria-memory-head{grid-row:1!important;padding:8px 0 0!important;display:grid!important;grid-template-columns:1fr auto!important;gap:12px!important}
 .aria-memory-head>div{min-width:0}.aria-memory-head .eyebrow{margin-bottom:10px!important}
 .aria-memory-head h2{font-size:0!important;line-height:1.1!important;margin:0!important}
-.aria-memory-head h2::before{content:"좋은 아침입니다.\A AI 사무국에 출근했습니다.";white-space:pre-line;font-size:clamp(30px,3.2vw,48px);line-height:1.08;color:var(--gold2);font-weight:900;letter-spacing:-.035em}
-.aria-memory-head p:not(.eyebrow){margin-top:12px!important;font-size:14px!important}
+.aria-memory-head h2::before{content:"전성권총재님, 반갑습니다.\A 오늘도 함께 힘차게 화이팅하겠습니다.";white-space:pre-line;font-size:clamp(30px,3.2vw,48px);line-height:1.08;color:var(--gold2);font-weight:900;letter-spacing:-.035em}
+.aria-memory-head p:not(.eyebrow){display:none!important}
 .aria-tabs{grid-row:2!important;margin:8px 0 2px!important;display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:9px!important;overflow:visible!important}
 .aria-tabs button{padding:14px 10px!important;font-weight:900!important;font-size:14px!important}
 .aria-summary{grid-row:3!important;margin-top:2px!important}
 .aria-command{grid-row:4!important;margin-top:4px!important}.aria-login{grid-row:4!important}.aria-preview{grid-row:5!important}
+.aria-command small{display:none!important}
 .aria-section,.aria-empty{grid-column:1 / -1!important}
 .aria-section:first-of-type{margin-top:24px!important}
 
