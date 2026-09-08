@@ -6,6 +6,7 @@ const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
   auth: { persistSession: true, detectSessionInUrl: true, autoRefreshToken: true }
 });
 const SEOUL_TZ = "Asia/Seoul";
+const AI_OFFICE_AUTH_RETURN_URL = "https://ipma1822-png.github.io/ai-office/";
 const $ = id => document.getElementById(id);
 const state = { session: null, items: [], period: "today", pending: null };
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
@@ -302,9 +303,24 @@ async function handleCommand(event) {
 }
 async function signInWithKakao() {
   const button=$("ariaKakaoLoginButton"); button.disabled=true;
-  const redirectTo=location.origin+location.pathname;
-  const { error }=await db.auth.signInWithOAuth({provider:"kakao",options:{redirectTo}});
-  if(error){button.disabled=false;message("카카오 인증을 시작하지 못했습니다",error.message);}
+  const { data, error }=await db.auth.signInWithOAuth({
+    provider:"kakao",
+    options:{redirectTo:AI_OFFICE_AUTH_RETURN_URL,skipBrowserRedirect:true}
+  });
+  if(error||!data?.url){
+    button.disabled=false;
+    message("카카오 인증을 시작하지 못했습니다",error?.message||"인증 주소를 확인하지 못했습니다.");
+    return;
+  }
+  const authUrl=new URL(data.url);
+  const expectedHost=new URL(cfg.supabaseUrl).host;
+  const actualReturn=authUrl.searchParams.get("redirect_to");
+  if(authUrl.host!==expectedHost||actualReturn!==AI_OFFICE_AUTH_RETURN_URL){
+    button.disabled=false;
+    message("안전한 인증 연결이 차단되었습니다","AI OFFICE 복귀 주소가 일치하지 않습니다. 관리자에게 알려 주세요.");
+    return;
+  }
+  location.assign(authUrl.href);
 }
 async function boot() {
   $("ariaCommandForm").addEventListener("submit",handleCommand);
