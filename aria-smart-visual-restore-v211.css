@@ -1,0 +1,8 @@
+/* AI OFFICE 2.1.1 · SMART VISUAL RESTORE */
+.asw-visual-main{margin:0 0 14px;border-radius:22px;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:#020617;box-shadow:0 14px 36px rgba(2,6,23,.22)}
+.asw-visual-main img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;background:#020617}
+.asw-aria-visual{margin:0 0 14px;border-radius:18px;overflow:hidden;border:1px solid rgba(148,163,184,.16);background:rgba(2,6,23,.72)}
+.asw-aria-visual img{display:block;width:100%;height:auto;max-height:300px;object-fit:cover}
+.asw-visual-caption{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;font-size:12px;color:#94a3b8;background:rgba(2,6,23,.82)}
+.asw-visual-caption b{color:#e2e8f0;font-size:13px}
+@media(max-width:700px){.asw-visual-main{border-radius:16px;margin-bottom:10px}.asw-visual-main img{max-height:230px;object-fit:cover}.asw-aria-visual{border-radius:14px;margin-bottom:10px}.asw-aria-visual img{max-height:190px;object-fit:cover}.asw-visual-caption{padding:8px 10px;font-size:11px}.asw-visual-caption b{font-size:12px}}
