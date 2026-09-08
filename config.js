@@ -8,3 +8,11 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   commandTimeoutMs: 8000,
   sessionMaxAgeHours: 12
 });
+
+// AI OFFICE 3.5.0 · GEN NEWS candidate approval workflow
+(()=>{
+  const script=document.createElement('script');
+  script.src='./gen-news-v350.js?v=3.5.0';
+  script.defer=true;
+  document.head.appendChild(script);
+})();
