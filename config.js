@@ -9,10 +9,16 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   sessionMaxAgeHours: 12
 });
 
-// AI OFFICE 3.5.0 · GEN NEWS candidate approval workflow
+// AI OFFICE 3.5.0 · GEN NEWS workflow modules
 (()=>{
-  const script=document.createElement('script');
-  script.src='./gen-news-v350.js?v=3.5.0';
-  script.defer=true;
-  document.head.appendChild(script);
+  const modules=[
+    './gen-news-v350.js?v=3.5.0',
+    './gen-newsroom-v350.js?v=3.5.0'
+  ];
+  modules.forEach(src=>{
+    const script=document.createElement('script');
+    script.src=src;
+    script.defer=true;
+    document.head.appendChild(script);
+  });
 })();
