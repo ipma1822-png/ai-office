@@ -12,19 +12,23 @@ window.AI_OFFICE_CONFIG = Object.freeze({
 // AI OFFICE 3.6.5 · GEN NEWS workflow modules
 (()=>{
   const modules=[
-    './gen-news-v350.js?v=3.6.4',
-    './gen-newsroom-v350.js?v=3.6.3',
-    './gen-auto-draft-v351.js?v=3.5.6',
-    './gen-auto-news-v352.js?v=3.5.3',
-    './executive-clean-v353.js?v=3.5.3',
-    './gen-news-compact-v354.js?v=3.5.4',
-    './gen-news-desk-v355.js?v=3.5.5',
-    './gen-factcheck-v357.js?v=3.5.7',
-    './gn24-brand-lock-v358.js?v=3.6.2',
-    './gn24-publish-bridge-v350.js?v=3.6.5'
+    {src:'./gen-news-v350.js?v=3.6.4'},
+    {src:'./gen-newsroom-v350.js?v=3.6.3'},
+    {src:'./gen-auto-draft-v351.js?v=3.5.6'},
+    {src:'./gen-auto-news-v352.js?v=3.5.3'},
+    {src:'./executive-clean-v353.js?v=3.5.3'},
+    {src:'./gen-news-compact-v354.js?v=3.5.4'},
+    {src:'./gen-news-desk-v355.js?v=3.5.5'},
+    {src:'./gen-factcheck-v357.js?v=3.5.7'},
+    {src:'./gn24-brand-lock-v358.js?v=3.6.2'},
+    {id:'gn24PublishReceipt360Script',src:'./gn24-publish-receipt-v360.js?v=3.6.6'},
+    {id:'systemVersion365Script',src:'./system-version-v365.js?v=3.6.6'},
+    {src:'./gn24-publish-bridge-v350.js?v=3.6.6'}
   ];
-  modules.forEach(src=>{
+  modules.forEach(({id,src})=>{
+    if(id&&document.getElementById(id))return;
     const script=document.createElement('script');
+    if(id)script.id=id;
     script.src=src;
     script.defer=true;
     document.head.appendChild(script);
