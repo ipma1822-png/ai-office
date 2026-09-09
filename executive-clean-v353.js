@@ -57,6 +57,28 @@ function polish(){
     #genNewsBoard .gen-candidate-note{display:none!important}
     #genNewsBoard{margin-top:16px}
     .shell>section{scroll-margin-top:90px}
+
+    /* PINPOINT MAIN CLEANUP · keep hero/ARIA/GEN untouched */
+    main.shell > .priority-strip,
+    main.shell > .section-head,
+    main.shell > .workspace-grid,
+    main.shell > .period-board,
+    main.shell > .schedule-board,
+    main.shell > .dday-board,
+    main.shell > .task-section,
+    main.shell > .task-policy,
+    main.shell > .project-section,
+    main.shell > .meeting-section,
+    main.shell > .detail-panel,
+    main.shell > .secretary-strip{
+      display:none!important;
+    }
+
+    #ariaMemory,
+    .main-hero-image,
+    #genNewsBoard{
+      display:block;
+    }
   `;
   if(!style.isConnected)document.head.appendChild(style);
 }
