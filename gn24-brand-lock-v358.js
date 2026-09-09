@@ -3,7 +3,7 @@
 const ARTICLE_KEY='ipma_ai_office_article_drafts_v1',QUEUE_KEY='ipma_ai_office_gn24_publish_queue_v1';
 const PROMPT_GUARD='NO TEXT. NO LETTERS. NO TYPOGRAPHY. NO CAPTION. NO HEADLINE. NO LOGO. NO WATERMARK.';
 const BRAND_SPEC_VERSION='GN24-SMART-IMAGE-v1';
-const IMAGE_URL_MODULE='./gn24-image-url-v359.js?v=3.6.10';
+const IMAGE_URL_MODULE='./gn24-image-url-v359.js?v=3.6.11';
 const FINAL_HOTFIX_MODULE='./gn24-final-approve-hotfix-v361.js?v=3.6.2';
 const $=id=>document.getElementById(id);
 const read=(k,f=[])=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(v)?v:f}catch(_){return f}};
