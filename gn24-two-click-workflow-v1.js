@@ -68,16 +68,11 @@ async function prepareArticle(newsId,button){
     if(!autoDraft)throw new Error('기존 GEN 초안작성 기능을 준비하지 못했습니다.');
     autoDraft.click();
     await waitFor(()=>read().find(item=>item.id===article.id)?.body?.trim().length>80);
-    let imagePrepared=false;
-    if(window.GN24SmartArticleImage){
-      status('기사 맞춤 대표이미지 생성 중…');
-      try{await window.GN24SmartArticleImage.generateForArticle(article.id);imagePrepared=true}catch(error){console.error(error)}
-    }
     $('nr350Review')?.click();
     $('nr350Approval')?.click();
     const ready=read().find(item=>item.id===article.id);
     if(!ready||ready.status!=='approval')throw new Error('최종 승인 대기 단계까지 연결하지 못했습니다.');
-    status(imagePrepared?'기사·맞춤 대표이미지 준비 완료 · 최종 확인해 주세요.':'기사는 준비되었습니다 · 대표이미지는 확인 또는 재생성이 필요합니다.',imagePrepared?'ok':'error');
+    status('기사 준비 완료 · 대표이미지는 나중에 첨부할 수 있습니다.','ok');
     $('genNewsroom350')?.scrollIntoView({behavior:'smooth',block:'start'});
   }catch(error){
     status(`기사 자동준비 일부 단계를 완료하지 못했습니다. 기사 데이터는 보존되어 있습니다. ${error.message}`,'error');
