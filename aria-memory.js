@@ -202,6 +202,7 @@ function editPreview(item, date = "", time = "") {
     <label><span>종류</span><select id="ariaEditType"><option value="schedule">일정</option><option value="task">업무</option><option value="meeting">회의</option><option value="article_review">기사 검토</option></select></label>
     <label><span>장소</span><input id="ariaEditLocation" value="${esc(item.location||"")}" maxlength="120"></label>
     <label class="wide"><span>설명</span><textarea id="ariaEditDescription" rows="2" maxlength="1000">${esc(item.description||"")}</textarea></label>
+    <label class="wide"><span>D-DAY</span><span class="aria-dday-toggle"><input id="ariaEditDday" type="checkbox"${item.dday_enabled ? " checked" : ""}> 중요 일정으로 D-DAY에 표시</span></label>
     </div><div class="aria-preview-actions"><button type="button" class="primary" data-preview-confirm>수정 저장</button><button type="button" data-preview-close>취소</button></div>`);
   $("ariaEditType").value = item.type;
   bindPreview();
@@ -237,7 +238,7 @@ async function commitPending() {
     } else if (pending.action === "edit") {
       const title = $("ariaEditTitle").value.trim(), date = $("ariaEditDate").value, time = $("ariaEditTime").value;
       if (!title || !date || !time) throw new Error("제목·날짜·시간을 모두 확인해 주세요.");
-      const payload = { title, start_at:toIso(date,time), type:$("ariaEditType").value, location:$("ariaEditLocation").value.trim()||null, description:$("ariaEditDescription").value.trim()||null, updated_at:new Date().toISOString() };
+      const payload = { title, start_at:toIso(date,time), type:$("ariaEditType").value, location:$("ariaEditLocation").value.trim()||null, description:$("ariaEditDescription").value.trim()||null, dday_enabled:$("ariaEditDday")?.checked ?? !!pending.item.dday_enabled, updated_at:new Date().toISOString() };
       if (!pending.item.id) {
         const { data, error } = await db.from("ai_office_items").insert({...pending.item,...payload,user_id:state.session.user.id}).select().single();
         if (error) throw error;

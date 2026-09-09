@@ -11,8 +11,6 @@ const HIDE_TEXT=[
   'v1.4.0 · SAFE NEWS DESK',
   'DISPLAY READY · v1.4.0'
 ];
-let currentEditItemId='';
-let ddayBypass=false;
 function norm(s){return String(s||'').replace(/\s+/g,' ').trim();}
 function hideExactOrContaining(text){
   [...document.querySelectorAll('p,small,span,div,b,strong,em,h1,h2,h3,h4')].forEach(el=>{
@@ -53,54 +51,11 @@ function hideVersionNoise(){
     if(/v\d|ARIA MEMORY|PHASE/i.test(t)&&t.length<100)el.style.display='none';
   });
 }
-function getAuthToken(){
-  try{
-    const url=window.AI_OFFICE_CONFIG?.supabaseUrl||'';
-    const ref=new URL(url).hostname.split('.')[0];
-    const raw=localStorage.getItem(`sb-${ref}-auth-token`);
-    if(!raw)return '';
-    const parsed=JSON.parse(raw);
-    return parsed?.access_token||parsed?.currentSession?.access_token||'';
-  }catch{return '';}
-}
-async function readDday(id){
-  const url=window.AI_OFFICE_CONFIG?.supabaseUrl||'';
-  const key=window.AI_OFFICE_CONFIG?.supabasePublishableKey||'';
-  const token=getAuthToken();
-  if(!id||!url||!key||!token)return false;
-  const res=await fetch(`${url}/rest/v1/ai_office_items?id=eq.${encodeURIComponent(id)}&select=dday_enabled`,{headers:{apikey:key,Authorization:`Bearer ${token}`}});
-  if(!res.ok)return false;
-  const rows=await res.json();
-  return !!rows?.[0]?.dday_enabled;
-}
-async function writeDday(id,enabled){
-  const url=window.AI_OFFICE_CONFIG?.supabaseUrl||'';
-  const key=window.AI_OFFICE_CONFIG?.supabasePublishableKey||'';
-  const token=getAuthToken();
-  if(!id||!url||!key||!token)throw new Error('D-DAY 저장을 위한 인증 정보를 찾지 못했습니다.');
-  const res=await fetch(`${url}/rest/v1/ai_office_items?id=eq.${encodeURIComponent(id)}`,{
-    method:'PATCH',
-    headers:{apikey:key,Authorization:`Bearer ${token}`,'Content-Type':'application/json',Prefer:'return=minimal'},
-    body:JSON.stringify({dday_enabled:!!enabled,updated_at:new Date().toISOString()})
-  });
-  if(!res.ok)throw new Error('D-DAY 저장에 실패했습니다.');
-}
-async function ensureDdayToggle(){
-  const grid=document.querySelector('#ariaPreview .aria-edit-grid');
-  if(!grid||!currentEditItemId||document.getElementById('ariaEditDday'))return;
-  const label=document.createElement('label');
-  label.className='wide';
-  label.id='ariaEditDdayRow';
-  label.innerHTML='<span>D-DAY</span><span style="display:flex;align-items:center;gap:8px;min-height:34px"><input id="ariaEditDday" type="checkbox" style="width:18px;height:18px;margin:0"> 중요 일정으로 D-DAY에 표시</span>';
-  grid.appendChild(label);
-  try{document.getElementById('ariaEditDday').checked=await readDday(currentEditItemId);}catch{}
-}
 function polish(){
   HIDE_TEXT.forEach(hideExactOrContaining);
   hideVoiceSection();
   hideLegacySecretaryDutyBoard();
   hideVersionNoise();
-  ensureDdayToggle();
   const newsBoard=document.getElementById('genNewsBoard');
   if(newsBoard){
     [...newsBoard.querySelectorAll('p,small,span,div')].forEach(el=>{
@@ -161,31 +116,5 @@ function polish(){
   `;
   if(!style.isConnected)document.head.appendChild(style);
 }
-document.addEventListener('click',event=>{
-  const edit=event.target.closest('[data-item-edit]');
-  if(edit){
-    currentEditItemId=edit.closest('.aria-card')?.dataset?.itemId||'';
-    setTimeout(ensureDdayToggle,0);
-    setTimeout(ensureDdayToggle,120);
-    return;
-  }
-  const confirm=event.target.closest('#ariaPreview [data-preview-confirm]');
-  const checkbox=document.getElementById('ariaEditDday');
-  if(!confirm||!checkbox||!currentEditItemId||ddayBypass)return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const enabled=checkbox.checked;
-  (async()=>{
-    try{
-      await writeDday(currentEditItemId,enabled);
-      ddayBypass=true;
-      confirm.click();
-      setTimeout(()=>{ddayBypass=false;},0);
-    }catch(err){
-      ddayBypass=false;
-      alert(err?.message||String(err));
-    }
-  })();
-},true);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{polish();setInterval(polish,1500)});else{polish();setInterval(polish,1500)}
 })();
