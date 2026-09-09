@@ -16,6 +16,7 @@ function installStyle(){
     #genNewsroom350.two-click-ready #nr350Review,
     #genNewsroom350.two-click-ready #nr350Approval,
     #genNewsroom350.two-click-ready #nr350Preflight,
+    #genNewsroom350.two-click-ready #genFactcheck357,
     #genNewsroom350.two-click-ready #nr350Guard,
     #genNewsroom350.two-click-ready #gn24PublishHandoff{display:none!important}
     #genNewsroom350.two-click-ready #nr350Final{display:block;width:100%;padding:14px 18px;font-size:15px}
