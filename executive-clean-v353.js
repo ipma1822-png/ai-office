@@ -107,11 +107,29 @@ function polish(){
       grid-column:1 / -1!important;
       justify-content:flex-start!important;
     }
+
+    /* PINPOINT ONLY: D-DAY cards match overdue 3-column layout */
+    #ariaDdaySection .aria-list{
+      display:grid!important;
+      grid-template-columns:repeat(3,minmax(0,1fr))!important;
+      gap:10px!important;
+    }
+    #ariaDdaySection .aria-card{
+      grid-template-columns:64px minmax(0,1fr)!important;
+      align-items:center!important;
+    }
+    #ariaDdaySection .aria-card-actions{
+      grid-column:1 / -1!important;
+      justify-content:flex-start!important;
+    }
+
     @media(max-width:1100px){
-      #ariaOverdueSection .aria-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+      #ariaOverdueSection .aria-list,
+      #ariaDdaySection .aria-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
     }
     @media(max-width:760px){
-      #ariaOverdueSection .aria-list{grid-template-columns:1fr!important;}
+      #ariaOverdueSection .aria-list,
+      #ariaDdaySection .aria-list{grid-template-columns:1fr!important;}
     }
   `;
   if(!style.isConnected)document.head.appendChild(style);
