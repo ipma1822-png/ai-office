@@ -17,6 +17,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     {src:'./gen-auto-draft-v351.js?v=3.5.6'},
     {src:'./gen-auto-news-v352.js?v=3.5.3'},
     {src:'./executive-clean-v353.js?v=3.6.7'},
+    {src:'./aria-dday-toggle-v204.js?v=2.0.4.1'},
     {src:'./gen-news-compact-v354.js?v=3.5.4'},
     {src:'./gen-news-desk-v355.js?v=3.5.5'},
     {src:'./gen-factcheck-v357.js?v=3.5.7'},
