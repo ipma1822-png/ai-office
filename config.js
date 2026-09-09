@@ -1,5 +1,5 @@
 window.AI_OFFICE_CONFIG = Object.freeze({
-  version: "2.0.5",
+  version: "2.0.6",
   supabaseUrl: "https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey: "sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
   adminAuthEmail: "class-admin@ipma.kr",

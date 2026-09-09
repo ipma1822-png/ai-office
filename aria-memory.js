@@ -11,6 +11,7 @@ const LOCAL_TASK_STORAGE_KEY = "ipma_ai_office_tasks_v1";
 const $ = id => document.getElementById(id);
 const state = { session: null, items: [], period: "today", pending: null };
 const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+const newItemId = () => crypto.randomUUID();
 
 function seoulYmd(date = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: SEOUL_TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
@@ -226,7 +227,7 @@ async function commitPending() {
   const button = document.querySelector("[data-preview-confirm]"); if (button) button.disabled = true;
   try {
     if (pending.action === "create") {
-      const payload = {...pending.draft, user_id:state.session.user.id};
+      const payload = {...pending.draft, id:pending.draft.id || newItemId(), user_id:state.session.user.id};
       const { data, error } = await db.from("ai_office_items").insert(payload).select().single();
       if (error) throw error;
       await logAction(data, isTask(data) ? "task_created" : "schedule_created", data.source_text);
@@ -240,7 +241,7 @@ async function commitPending() {
       if (!title || !date || !time) throw new Error("제목·날짜·시간을 모두 확인해 주세요.");
       const payload = { title, start_at:toIso(date,time), type:$("ariaEditType").value, location:$("ariaEditLocation").value.trim()||null, description:$("ariaEditDescription").value.trim()||null, dday_enabled:$("ariaEditDday")?.checked ?? !!pending.item.dday_enabled, updated_at:new Date().toISOString() };
       if (!pending.item.id) {
-        const { data, error } = await db.from("ai_office_items").insert({...pending.item,...payload,user_id:state.session.user.id}).select().single();
+        const { data, error } = await db.from("ai_office_items").insert({...pending.item,...payload,id:pending.item.id || newItemId(),user_id:state.session.user.id}).select().single();
         if (error) throw error;
         await logAction(data, isTask(data) ? "task_created" : "schedule_created", data.source_text);
       } else {
