@@ -29,6 +29,18 @@ function hideVoiceSection(){
     if(box&&norm(box.textContent).length<3500)box.style.display='none';
   });
 }
+function hideLegacySecretaryDutyBoard(){
+  [...document.querySelectorAll('main.shell > section')].forEach(section=>{
+    if(section.id==='ariaMemory'||section.id==='genNewsBoard'||section.classList.contains('main-hero-image'))return;
+    const t=norm(section.textContent);
+    const isDutyBoard=t.includes('아리아 · 젠 업무분장')||(
+      t.includes('AI SECRETARY')&&
+      t.includes('아리아 · 전략/운영 사무국장')&&
+      t.includes('젠 · 뉴스/콘텐츠 사무국장')
+    );
+    if(isDutyBoard)section.style.setProperty('display','none','important');
+  });
+}
 function hideVersionNoise(){
   [...document.querySelectorAll('.version-chip,[class*="version"],[class*="build"]')].forEach(el=>{
     if(el.id==='systemVersion365'){
@@ -42,6 +54,7 @@ function hideVersionNoise(){
 function polish(){
   HIDE_TEXT.forEach(hideExactOrContaining);
   hideVoiceSection();
+  hideLegacySecretaryDutyBoard();
   hideVersionNoise();
   const newsBoard=document.getElementById('genNewsBoard');
   if(newsBoard){
