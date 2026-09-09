@@ -202,7 +202,7 @@ function editPreview(item, date = "", time = "") {
     <label><span>종류</span><select id="ariaEditType"><option value="schedule">일정</option><option value="task">업무</option><option value="meeting">회의</option><option value="article_review">기사 검토</option></select></label>
     <label><span>장소</span><input id="ariaEditLocation" value="${esc(item.location||"")}" maxlength="120"></label>
     <label class="wide"><span>설명</span><textarea id="ariaEditDescription" rows="2" maxlength="1000">${esc(item.description||"")}</textarea></label>
-    <label class="wide"><span>D-DAY</span><span class="aria-dday-toggle"><input id="ariaEditDday" type="checkbox"${item.dday_enabled ? " checked" : ""}> 중요 일정으로 D-DAY에 표시</span></label>
+    <label class="wide"><span>D-DAY</span><span class="aria-dday-toggle" style="display:flex;align-items:center;gap:8px;min-height:44px"><input id="ariaEditDday" type="checkbox" style="width:18px;height:18px;margin:0;flex:0 0 auto"${item.dday_enabled ? " checked" : ""}> 중요 일정으로 D-DAY에 표시</span></label>
     </div><div class="aria-preview-actions"><button type="button" class="primary" data-preview-confirm>수정 저장</button><button type="button" data-preview-close>취소</button></div>`);
   $("ariaEditType").value = item.type;
   bindPreview();
