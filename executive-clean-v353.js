@@ -51,6 +51,33 @@ function hideVersionNoise(){
     if(/v\d|ARIA MEMORY|PHASE/i.test(t)&&t.length<100)el.style.display='none';
   });
 }
+function compactGenHeader(newsBoard){
+  const head=newsBoard.querySelector('.section-head');
+  const desc=head?.querySelector(':scope > p');
+  if(desc&&norm(desc.textContent).includes('GEN이 검토할 뉴스 후보를 모아 중요도 순으로 보고합니다')){
+    desc.style.setProperty('display','none','important');
+  }
+  const ids=['newsTotal','newsUrgent','newsHigh'];
+  const stats=ids.map(id=>document.getElementById(id)).filter(el=>el&&newsBoard.contains(el));
+  const boxes=stats.map(el=>el.parentElement).filter(Boolean);
+  boxes.forEach(box=>{
+    box.style.setProperty('display','inline-flex','important');
+    box.style.setProperty('align-items','baseline','important');
+    box.style.setProperty('gap','3px','important');
+    box.style.setProperty('margin','0 16px 0 0','important');
+    box.style.setProperty('width','auto','important');
+  });
+  if(boxes.length===3){
+    const parent=boxes[0].parentElement;
+    if(parent&&boxes.every(box=>box.parentElement===parent)){
+      parent.style.setProperty('display','flex','important');
+      parent.style.setProperty('align-items','center','important');
+      parent.style.setProperty('flex-wrap','wrap','important');
+      parent.style.setProperty('gap','4px 0','important');
+      parent.style.setProperty('margin','6px 0 10px','important');
+    }
+  }
+}
 function polish(){
   HIDE_TEXT.forEach(hideExactOrContaining);
   hideVoiceSection();
@@ -58,6 +85,7 @@ function polish(){
   hideVersionNoise();
   const newsBoard=document.getElementById('genNewsBoard');
   if(newsBoard){
+    compactGenHeader(newsBoard);
     [...newsBoard.querySelectorAll('p,small,span,div')].forEach(el=>{
       const t=norm(el.textContent);
       if(t.startsWith('※ 현재는 직접 확인한 정보만 저장')||t.includes('로컬 브리핑함')||t.includes('사실 확인되지 않은 내용을 자동 생성하지 않습니다'))el.style.display='none';
@@ -68,7 +96,12 @@ function polish(){
   style.textContent=`
     .topbar{box-shadow:0 8px 24px rgba(0,0,0,.18)}
     #genNewsBoard .gen-candidate-note{display:none!important}
-    #genNewsBoard{margin-top:16px}
+    #genNewsBoard{margin-top:16px;padding:16px!important}
+    #genNewsBoard>.section-head{margin-bottom:8px!important;gap:8px!important}
+    #genNewsBoard>.section-head h2{margin-bottom:0!important}
+    #genNewsBoard .gen-news-grid{gap:10px!important}
+    #genNewsBoard #newsBriefing{margin:8px 0!important}
+    #genNewsBoard #newsList{margin-top:8px!important}
     .shell>section{scroll-margin-top:90px}
 
     /* PINPOINT MAIN CLEANUP · keep hero/ARIA/GEN untouched */
@@ -130,6 +163,7 @@ function polish(){
     @media(max-width:760px){
       #ariaOverdueSection .aria-list,
       #ariaDdaySection .aria-list{grid-template-columns:1fr!important;}
+      #genNewsBoard{padding:13px!important}
     }
   `;
   if(!style.isConnected)document.head.appendChild(style);
