@@ -5,7 +5,7 @@
   const ARTICLE_KEY='ipma_ai_office_article_drafts_v1';
   const SEOUL_TZ='Asia/Seoul';
   const $=id=>document.getElementById(id);
-  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const read=(key,fallback=[])=>{try{const raw=localStorage.getItem(key);const v=raw?JSON.parse(raw):fallback;return Array.isArray(v)?v:fallback;}catch(_){return fallback;}};
   const write=(key,v)=>{try{localStorage.setItem(key,JSON.stringify(v));}catch(_){}};
   const priorityValue=v=>({urgent:3,high:2,normal:1,'3':3,'2':2,'1':1}[String(v)]||1);
