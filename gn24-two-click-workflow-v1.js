@@ -55,27 +55,26 @@ async function waitFor(test,timeout=7000){
 
 async function prepareArticle(newsId,button){
   if(clickOneRunning)return;
+  let article=null;
   clickOneRunning=true;
-  setBusy(button,true,'GEN 기사 제작 중…');
-  status('GEN 기사 제작 중…');
+  setBusy(button,true,'GEN 자료 분석 중…');
+  status('GEN 자료 분석 중…');
   try{
-    const article=await waitFor(()=>read().find(item=>item.sourceNewsId===newsId));
+    article=await waitFor(()=>read().find(item=>item.sourceNewsId===newsId));
     if(!article)throw new Error('승인된 기사 레코드를 찾지 못했습니다.');
     const draftButton=await waitFor(()=>document.querySelector(`#nr350Drafts [data-id="${CSS.escape(article.id)}"]`));
     if(!draftButton)throw new Error('기사 작업함에서 승인 기사를 열지 못했습니다.');
     draftButton.click();
-    const autoDraft=await waitFor(()=>$('genAutoDraft351'));
-    if(!autoDraft)throw new Error('기존 GEN 초안작성 기능을 준비하지 못했습니다.');
-    autoDraft.click();
-    await waitFor(()=>read().find(item=>item.id===article.id)?.body?.trim().length>80);
-    $('nr350Review')?.click();
-    $('nr350Approval')?.click();
+    const engine=await waitFor(()=>window.GenSmartArticleEngine);
+    if(!engine)throw new Error('GEN SMART ARTICLE ENGINE을 준비하지 못했습니다.');
+    await engine.run(article.id,message=>{status(message);setBusy(button,true,message)});
     const ready=read().find(item=>item.id===article.id);
-    if(!ready||ready.status!=='approval')throw new Error('최종 승인 대기 단계까지 연결하지 못했습니다.');
-    status('기사 준비 완료 · 대표이미지는 나중에 첨부할 수 있습니다.','ok');
+    if(!ready?.qualityResult?.passed)throw new Error('기사 품질검사를 통과하지 못했습니다.');
+    status(`기사 준비 완료 · 품질 ${ready.qualityScore}점 · 내용을 확인해 주세요.`,'ok');
     $('genNewsroom350')?.scrollIntoView({behavior:'smooth',block:'start'});
   }catch(error){
-    status(`기사 자동준비 일부 단계를 완료하지 못했습니다. 기사 데이터는 보존되어 있습니다. ${error.message}`,'error');
+    window.GenSmartArticleEngine?.markError(article?.id||newsId,error);
+    status(`기사 자동작성 일부 단계 실패 · 기사와 뉴스 후보는 보존되어 있습니다. ${error.message}`,'error');
   }finally{
     setBusy(button,false,'');
     clickOneRunning=false;
