@@ -16,7 +16,7 @@
     meeting:{eyebrow:'MEETING',title:'회의관리',foot:'7차 회의관리는 AI OFFICE 전용 localStorage에서 동작하며 PROJECT와 연결합니다.',rows:[['회의 전','목적 · 참석자 · 안건 · 자료 · 질문 · 결정 필요사항','준비'],['회의 후','결정사항 · 미결사항 · 담당 · 후속업무 · 다음회의','기록'],['PROJECT 연결','회의 결과를 서울 전략회의 PROJECT 기록으로 반영할 수 있습니다.','연결'],['저장','현재 브라우저의 AI OFFICE 전용 localStorage만 사용','안전']]},
     library:{eyebrow:'RESOURCE',title:'자료',foot:'기존 자료 저장 위치와 호출 방식을 먼저 확인한 뒤 AI OFFICE에서 연결합니다.',rows:[['저장 원칙','AI 사무국에 기존 자료를 중복 저장하지 않습니다.','원칙'],['역할','검색 · 분류 · 호출 · DISPLAY 연결','연결'],['이미지','기존 이미지 전송/표시 기능을 우선 재사용','재사용'],['현재 단계','기존 자료 저장 위치 조사 후 연결 예정','NEXT']]},
     aria:{eyebrow:'ARIA · AI SECRETARY',title:'아리아 업무분장',foot:'9차에서는 아리아의 메뉴와 음성 명령을 하나의 공통 ACTION으로 실행합니다.',rows:[['전략·기획','조직운영과 의사결정 준비를 지원합니다.','전략'],['일정·업무','오늘 · 주간 · 월간 · D-Day · TASK를 연결합니다.','업무'],['PROJECT·회의','프로젝트 진행과 회의 전후 기록을 브리핑합니다.','연결'],['권한 원칙','최종 판단·승인·결정·집행은 사람이 담당합니다.','보호']]},
-    gen:{eyebrow:'GEN · AI SECRETARY',title:'젠 업무분장',foot:'9차에서는 젠의 메뉴와 음성 명령을 하나의 공통 ACTION으로 실행합니다. 자동 발행은 하지 않습니다.',rows:[['뉴스','주요 뉴스 모니터링과 기사 아이디어를 준비합니다.','NEWS'],['기사·콘텐츠','기사 초안 · SNS · 홍보 · 발표자료를 준비합니다.','MEDIA'],['이미지·미디어','이미지 · 영상 · 음악 등 기존 콘텐츠 호출을 준비합니다.','CONTENT'],['발행 원칙','기사 및 공식 콘텐츠 최종 발행은 사람이 승인합니다.','보호']]}
+    gen:{eyebrow:'GEN · AI 정보국장',title:'세계 주요뉴스 보고',foot:'세계 주요뉴스를 수집·선별하여 제목과 원출처 링크를 보고합니다.',rows:[['뉴스 수집','세계 주요뉴스를 자동 수집합니다.','NEWS'],['주요뉴스 선별','중요도에 따라 검토 후보를 정리합니다.','SELECT'],['원출처 보고','뉴스 제목과 원문 링크를 제공합니다.','SOURCE'],['편집 원칙','기사화와 최종 편집·발행은 편집국장이 결정합니다.','HUMAN']]}
   };
 
   function seoulParts(date){
@@ -93,7 +93,7 @@
 
   document.querySelectorAll('.ai-action').forEach(btn=>btn.addEventListener('click',()=>{
     const aria=btn.dataset.ai==='aria';
-    document.getElementById('panelEyebrow').textContent=aria?'ARIA · AI SECRETARY':'GEN · AI SECRETARY';
+    document.getElementById('panelEyebrow').textContent=aria?'ARIA · AI SECRETARY':'GEN · AI 정보국장';
     document.getElementById('panelTitle').textContent=aria?'아리아 업무영역':'젠 업무영역';
     document.getElementById('panelDate').textContent=`AI OFFICE 2.0 · v${VERSION}`;
     const rows=aria
