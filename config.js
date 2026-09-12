@@ -9,6 +9,24 @@ window.AI_OFFICE_CONFIG = Object.freeze({
   sessionMaxAgeHours: 12
 });
 
+// Broken legacy admin-hub link hotfix only.
+(()=>{
+  const fixLegacyAdminHub=()=>{
+    document.querySelectorAll('a[href*="kmt-landing/admin-hub"]').forEach(link=>{
+      if(link.classList.contains('brand')){
+        link.href='./';
+        link.setAttribute('aria-label','AI 사무국 홈');
+      }else if((link.textContent||'').includes('관리자 허브')){
+        link.remove();
+      }else{
+        link.href='./';
+      }
+    });
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fixLegacyAdminHub,{once:true});
+  else fixLegacyAdminHub();
+})();
+
 // AI OFFICE 3.6.5 · GEN NEWS workflow modules
 (()=>{
   const modules=[
