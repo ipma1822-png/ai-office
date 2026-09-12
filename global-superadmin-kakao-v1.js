@@ -13,6 +13,19 @@ if (!cfg?.supabaseUrl || !cfg?.supabasePublishableKey) {
 
   const remove = id => document.getElementById(id)?.remove();
 
+  function cleanupLegacyAdminHubLinks() {
+    document.querySelectorAll('a[href*="kmt-landing/admin-hub"]').forEach(link => {
+      if (link.classList.contains("brand")) {
+        link.href = "./";
+        link.setAttribute("aria-label", "AI 사무국 홈");
+      } else if ((link.textContent || "").includes("관리자 허브")) {
+        link.remove();
+      } else {
+        link.href = "./";
+      }
+    });
+  }
+
   function showLoginGate(message = "전총재님 전용 AI 사무국") {
     remove(OVERLAY_ID);
     remove(CONTROL_ID);
@@ -65,6 +78,7 @@ if (!cfg?.supabaseUrl || !cfg?.supabasePublishableKey) {
 
   async function syncAuth() {
     try {
+      cleanupLegacyAdminHubLinks();
       const {data:{session}}=await db.auth.getSession();
       if(!session){showLoginGate();return;}
       const {data:isSuperadmin,error:roleError}=await db.rpc("spark_is_superadmin");
@@ -76,6 +90,6 @@ if (!cfg?.supabaseUrl || !cfg?.supabasePublishableKey) {
     } catch(error){console.warn("[GLOBAL AUTH] bootstrap failed",error);}
   }
 
-  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",syncAuth,{once:true}); else syncAuth();
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",()=>{cleanupLegacyAdminHubLinks();syncAuth();},{once:true}); else {cleanupLegacyAdminHubLinks();syncAuth();}
   db.auth.onAuthStateChange(()=>setTimeout(syncAuth,0));
 }
