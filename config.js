@@ -12,6 +12,7 @@ window.AI_OFFICE_CONFIG = Object.freeze({
 // AI OFFICE 3.6.5 · GEN NEWS workflow modules
 (()=>{
   const modules=[
+    {id:'globalSuperadminKakaoV1Script',src:'./global-superadmin-kakao-v1.js?v=1.0.0',type:'module'},
     {src:'./gen-news-v350.js?v=3.6.4'},
     {src:'./gen-newsroom-v350.js?v=3.6.12'},
     {src:'./gen-auto-draft-v351.js?v=3.5.6'},
@@ -27,11 +28,12 @@ window.AI_OFFICE_CONFIG = Object.freeze({
     {src:'./gn24-smart-article-image-v1.js?v=1.0.0'},
     {src:'./gn24-two-click-workflow-v1.js?v=1.2.0'}
   ];
-  modules.forEach(({id,src})=>{
+  modules.forEach(({id,src,type})=>{
     if(id&&document.getElementById(id))return;
     const script=document.createElement('script');
     if(id)script.id=id;
     script.src=src;
+    if(type)script.type=type;
     script.defer=true;
     document.head.appendChild(script);
   });
